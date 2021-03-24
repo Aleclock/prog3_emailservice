@@ -21,6 +21,12 @@ public class Main extends Application {
     controller.initModel(new Model());
   }
 
+  @Override
+  public void stop() throws Exception {
+    //controller.removeListener();
+    controller.getModel().closeConnection();
+  }
+
   public static void main (String[] args) {
     launch(args);
   }

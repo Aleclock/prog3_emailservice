@@ -2,10 +2,7 @@ package server;
 
 import lib.User;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.net.Socket;
 import java.net.SocketException;
@@ -14,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Connection implements Runnable{
+  private PrintStream ps;
   private Model model;
   private Socket socket;
   private User user;
@@ -22,7 +20,8 @@ public class Connection implements Runnable{
   private List<String> userList;
   private boolean closed = false;
 
-  public Connection(Model model, Socket socket, List<String> userList) {
+  public Connection(Model model, Socket socket, List<String> userList, PrintStream ps) {
+    this.ps = ps;
     this.model = model;
     this.socket = socket;
     this.userList = userList;
@@ -30,7 +29,6 @@ public class Connection implements Runnable{
       this.inputStream = new ObjectInputStream(socket.getInputStream());
       this.outputStream = new ObjectOutputStream(socket.getOutputStream());
       this.closed = false;
-      System.out.println("Inizialized connection");
     } catch (IOException e){
       e.printStackTrace();
       // TODO invalid socket
@@ -39,31 +37,34 @@ public class Connection implements Runnable{
 
   @Override
   public void run() {
-    String command = null;
-    Object o = null;
-    System.out.println("Eseguendo comando");
     try {
-      if ((o = inputStream.readObject()) != null) {
-        if (o instanceof User) {
-          if (verifyUser((User) o)) {
-            outputStream.writeObject(true);
-            handleCall();
-          } else {
-            outputStream.writeObject(false);
-            closeConnection();
+      String command = null;
+      Object o = null;
+      if (!closed) {
+        try {
+          if ((o = inputStream.readObject()) != null) {
+            if (o instanceof User) {
+              if (verifyUser((User) o)) {
+                this.model.addUser((User) o);
+                outputStream.writeObject(true);
+                handleCall();
+              } else {
+                outputStream.writeObject(false);
+                closeConnection();
+              }
+            }
           }
+        } catch (IOException | ClassNotFoundException e) {
+          e.printStackTrace();
         }
       }
-    } catch (IOException | ClassNotFoundException e) {
+    } catch (Exception e) {
       e.printStackTrace();
-    }
-    //Do your logic here. You have the `socket` available to read/write data.
-    handleCall();
-    //Make sure to close
-    try {
-      socket.close();
-    }catch(IOException ioe) {
-      System.out.println("Error closing client connection");
+    } finally {
+      if (inputStream != null && outputStream != null) {
+        if (!closed)
+          closeConnection();
+      }
     }
   }
 
@@ -73,8 +74,10 @@ public class Connection implements Runnable{
 
   private void closeConnection() {
     if (!closed) {
-      System.out.println(socket);
       try {
+        if (this.user != null) {
+          ps.println(this.user.getUserName() + "closed connection");
+        }
         inputStream.close();
         outputStream.close();
         socket.close();
@@ -87,33 +90,36 @@ public class Connection implements Runnable{
     }
   }
 
-  private void handleCall() {
-    System.out.println("Command done");
-    closeConnection();
-  }
-
-  /*private String handleCall() {
+  private void handleCall() throws IOException, ClassNotFoundException {
+    String command = null;
     if (!closed) {
+      Object o;
       try {
-        Object o;
         if ((o = inputStream.readObject()) != null) {
-          if (o != null && o instanceof String) {
-            String command = (String) o;
-
+          if (o instanceof String) {
+            command = (String) o;
             switch (command) {
-              case "login":
-                login();
+              case "close_connection":
+                freeUser();
+                closeConnection();
                 break;
               default:
                 break;
             }
           }
         }
-      } catch (IOException | ClassNotFoundException e) {
-        e.printStackTrace();
+      } catch (EOFException e) {
+        //do nothing
       }
     }
-  }*/
+    closeConnection();
+  }
+
+  private void freeUser() {
+    if (!closed) {
+      this.model.freeUser(this.user);
+    }
+  }
 
   boolean isClosed() {
     return closed;

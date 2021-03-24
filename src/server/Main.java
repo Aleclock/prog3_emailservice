@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.PrintStream;
+
 public class Main extends Application {
   Controller controller;
   Server server;
@@ -20,7 +22,8 @@ public class Main extends Application {
       stage.show();
 
       controller = loader.getController();
-      server = new Server();
+      PrintStream ps = controller.getPrintStream();
+      server = new Server(ps);
       controller.setServer(server);
     } catch (Exception e){
       e.printStackTrace();

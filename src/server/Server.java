@@ -15,14 +15,16 @@ import java.util.concurrent.Executors;
 public class Server extends Thread{
   private ServerSocket serverSocket;
   private ExecutorService executorService;
+  private PrintStream ps;
   private List<Connection> connectionList = new ArrayList();
   private List<String> userList = new ArrayList<>();
   private Model model;
   private int nThread = 5;
   private boolean stop = false;
 
-  Server() {
+  Server(PrintStream ps) {
     this.model = new Model();
+    this.ps = ps;
     initUserList();
     this.setDaemon(true);
     start();
@@ -37,10 +39,11 @@ public class Server extends Thread{
     executorService = Executors.newFixedThreadPool(nThread);
     try {
       serverSocket = new ServerSocket(8189);
+      ps.println("Server: avviato.");
       while (!stop) {
         try {
           Socket client = serverSocket.accept();
-          Connection connection = new Connection(model, client, userList);
+          Connection connection = new Connection(model, client, userList, ps);
           executorService.execute(connection);
           //connectionList.add(connection);
         } catch(SocketTimeoutException ex){
