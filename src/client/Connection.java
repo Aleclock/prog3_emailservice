@@ -1,6 +1,7 @@
 package client;
 
 import lib.Email;
+import lib.EmailBox;
 import lib.User;
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.List;
 
 public class Connection {
   private Socket socket;
@@ -59,10 +61,10 @@ public class Connection {
    * Send to server User object and retrieve true/false if user's mail exists or not
    */
   public boolean login(String email){
-    if (outputStream != null) {
+    if (this.outputStream != null) {
       try {
-        outputStream.writeObject(new User(email));
-        Object o = inputStream.readObject();
+        this.outputStream.writeObject(new User(email));
+        Object o = this.inputStream.readObject();
         if (o != null && o instanceof Boolean) {
           return (boolean) o;
         }
@@ -71,6 +73,32 @@ public class Connection {
       }
     }
     return false;
+  }
+
+  public List<Email> getEmails() {
+    List<Email> emails = null;
+    if (this.outputStream != null) {
+      try {
+        /* TODO il discorso è che ogni volta viene creata una nuova connessione, quindi è necessario inviare prima l'utente e
+        poi l'azione da compiere, forse ha più senso inviare una coppia <User, String> dove String è l'azione da compiere
+        quindi login, closeConnection, readEmails. in questo modo non è necessario inviare troppe cose
+         */
+        outputStream.writeObject(this.user);
+        Object o = inputStream.readObject();
+        outputStream.writeObject("read_emails");
+        o = inputStream.readObject();
+        System.out.println("email lato client:\n" + o);
+        if (o != null && o instanceof EmailBox) {
+          EmailBox emailBox = (EmailBox) o;
+          emails = emailBox.getEmailList();
+        } else {
+          // TODO lettura email box fallita
+        }
+      } catch (IOException | ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+    }
+    return emails;
   }
 
   public boolean isConnected() {

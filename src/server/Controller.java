@@ -5,8 +5,6 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
-
-import java.io.Console;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -27,13 +25,13 @@ public class Controller {
   @FXML
   private void handleServerStatus(Event event){
     if (toggle_server_status.isSelected()) {
-      play();
+      start();
     } else {
       pause();
     }
   }
 
-  private void play() {
+  private void start() {
     this.server.startServer();
   }
 

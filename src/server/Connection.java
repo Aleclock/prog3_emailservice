@@ -41,6 +41,7 @@ public class Connection implements Runnable{
       if (!closed) {
         try {
           if ((o = inputStream.readObject()) != null) {
+            System.out.println(o);
             if (o instanceof User) {
               if (verifyUser((User) o)) {
                 this.model.addUser((User) o);
@@ -92,7 +93,8 @@ public class Connection implements Runnable{
   }
 
   private void handleCall() throws IOException, ClassNotFoundException {
-    String command = null;
+    String command;
+    System.out.println("handleCall");
     if (!closed) {
       Object o;
       try {
@@ -104,6 +106,9 @@ public class Connection implements Runnable{
                 freeUser();
                 closeConnection();
                 break;
+              case "read_emails":
+                readEmails();
+                break;
               default:
                 break;
             }
@@ -112,13 +117,22 @@ public class Connection implements Runnable{
       } catch (EOFException e) {
         //do nothing
       }
+      closeConnection();
     }
-    closeConnection();
   }
 
   private void freeUser() {
     if (!closed) {
       this.model.freeUser(this.user);
+    }
+  }
+
+  private void readEmails() throws IOException{
+    System.out.println("Adesso recupero le mail");
+    if (!closed) {
+      EmailBox emailBox = model.getEmailBox(this.user);
+      System.out.println("Email lato server \n" + emailBox);
+      this.outputStream.writeObject(emailBox);
     }
   }
 

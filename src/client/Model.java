@@ -7,6 +7,7 @@ import lib.User;
 
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Model {
   private Connection connection;
@@ -20,9 +21,18 @@ public class Model {
   }
 
   public void connectUser() throws SocketException {
-    connection.connect();
-    if (!connection.isConnected()) {
+    this.connection.connect();
+    if (!this.connection.isConnected()) {
       throw new SocketException("Impossibile raggiungere il server");
+    }
+  }
+
+  public void retrieveEmails() {
+    try {
+      connectUser();
+      List<Email> newEmail = this.connection.getEmails();
+    } catch (SocketException e) {
+      e.printStackTrace();
     }
   }
 

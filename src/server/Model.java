@@ -5,8 +5,6 @@ import com.google.gson.GsonBuilder;
 import lib.Email;
 import lib.EmailBox;
 import lib.User;
-import netscape.javascript.JSObject;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +23,8 @@ public class Model {
     this.emailBox = getEmailBox(user);
     if (this.emailBox == null) {
       createEmptyEmailBox(user);
+      this.emailBox = getEmailBox(user);
     }
-    // if emailBox is null
-    // create emailBox
   }
 
   public EmailBox getEmailBox(User user) {
@@ -39,9 +36,7 @@ public class Model {
       try {
         jsonFile = new BufferedReader(new FileReader(filePath));
         Gson gson = new Gson();
-        this.emailBox = gson.fromJson(jsonFile, EmailBox.class);
-        System.out.println(this.emailBox);
-        System.out.println("esiste");
+        emailBox = gson.fromJson(jsonFile, EmailBox.class);
       } catch (FileNotFoundException e) {
         this.ps.println(user.getUserName() + ": la lettura della casella email non è andata a buon fine");
         e.printStackTrace();

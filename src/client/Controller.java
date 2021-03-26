@@ -29,10 +29,10 @@ public class Controller {
 
   @FXML
   public void handleLoginButton(ActionEvent event) {
-    model.setUser(new User(tf_email.getText()));
+    this.model.setUser(new User(tf_email.getText()));
     Connection connection = model.getConnection();
     try {
-      model.connectUser();
+      this.model.connectUser();
     } catch(SocketException ex) {
       Alert a = getDialog("Server non raggiungibile", "Server non raggiungibile, riprova più tardi.");
       a.showAndWait();
@@ -40,15 +40,16 @@ public class Controller {
 
     if (matchesEmailFormat(tf_email.getText()) && connection.login(tf_email.getText())) {
       try {
-        connection.setUser(model.getUser()); // TODO capire se ha senso e se metterlo qua
+        connection.setUser(this.model.getUser()); // TODO capire se ha senso e se metterlo qua
         FXMLLoader loader = new FXMLLoader(getClass().getResource("res/client_main_scene.fxml"));
         Parent root = loader.load();
         tf_email.getScene().setRoot(loader.getRoot());
-
         Stage stage = (Stage) root.getScene().getWindow();
         stage.setTitle(this.model.getUser().getUserName());
-        // TODO cliccare "aggiorna" in modo da ottenere le mail
         Button refresh = (Button) loader.getNamespace().get("refresh");
+        Controller controller = loader.getController();
+        controller.initModel(this.model);
+        System.out.println(this.model);
         refresh.fire();
         //TextField foo = (TextField)loader.getNamespace().get("exampleFxId");
       } catch(IOException ex) {
@@ -67,7 +68,8 @@ public class Controller {
 
   @FXML
   public void handleRefreshButton(ActionEvent event) {
-    System.out.println("Mò aggiorno");
+    System.out.println(this.model);
+    this.model.retrieveEmails();
   }
 
   @FXML
