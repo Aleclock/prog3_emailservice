@@ -1,5 +1,7 @@
 package server;
 
+import javafx.util.Pair;
+import lib.Command;
 import lib.EmailBox;
 import lib.User;
 
@@ -36,24 +38,16 @@ public class Connection implements Runnable{
   @Override
   public void run() {
     try {
-      String command = null; // TODO capire se userlo e come
       Object o = null;
       if (!closed) {
         try {
           if ((o = inputStream.readObject()) != null) {
-            System.out.println(o);
-            if (o instanceof User) {
-              if (verifyUser((User) o)) {
-                this.model.addUser((User) o);
-                this.user = (User) o;
-                outputStream.writeObject(true);
-                this.model.getOrCreateEmailBox(this.user);
-                ps.println(this.user.getUserName() + " logged in");
-                handleCall();
-              } else {
-                outputStream.writeObject(false);
-                closeConnection();
-              }
+
+            if ( o instanceof Command) {
+              Command command = (Command) o;
+              // TODO capire se ha senso mantenere this.user
+              setUser(command.getUser());
+              handleCall(command);
             }
           }
         } catch (IOException | ClassNotFoundException e) {
@@ -68,6 +62,10 @@ public class Connection implements Runnable{
           closeConnection();
       }
     }
+  }
+
+  private void setUser(User user) {
+    this.user = user;
   }
 
   private boolean verifyUser(User user) {
@@ -92,32 +90,44 @@ public class Connection implements Runnable{
     }
   }
 
-  private void handleCall() throws IOException, ClassNotFoundException {
-    String command;
+  private void handleCall(Command command) throws IOException, ClassNotFoundException {
     System.out.println("handleCall");
     if (!closed) {
       Object o;
       try {
-        if ((o = inputStream.readObject()) != null) {
-          if (o instanceof String) {
-            command = (String) o;
-            switch (command) {
-              case "close_connection":
-                freeUser();
-                closeConnection();
-                break;
-              case "read_emails":
-                readEmails();
-                break;
-              default:
-                break;
-            }
-          }
+        switch (command.getCommandKey()) {
+          case "login":
+            loginUser(command.getUser());
+            break;
+          case "close_connection":
+            freeUser();
+            closeConnection();
+            break;
+          case "read_emails":
+            readEmails();
+            break;
+          default:
+            break;
         }
       } catch (EOFException e) {
         //do nothing
       }
       closeConnection();
+    }
+  }
+
+  private void loginUser(User user) throws IOException {
+    if (!closed) {
+      if (verifyUser(user)) {
+        this.model.addUser(user);
+        this.user = user;
+        outputStream.writeObject(true);
+        this.model.getOrCreateEmailBox(this.user);
+        ps.println(this.user.getUserName() + " logged in");
+      } else {
+        outputStream.writeObject(false);
+        closeConnection();
+      }
     }
   }
 

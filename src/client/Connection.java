@@ -1,5 +1,6 @@
 package client;
 
+import lib.Command;
 import lib.Email;
 import lib.EmailBox;
 import lib.User;
@@ -63,7 +64,9 @@ public class Connection {
   public boolean login(String email){
     if (this.outputStream != null) {
       try {
-        this.outputStream.writeObject(new User(email));
+        //this.outputStream.writeObject(new User(email));
+        // TODO se faccio il login forse dopo devo settare this.user
+        this.outputStream.writeObject(new Command(new User(email), "login", null));
         Object o = this.inputStream.readObject();
         if (o != null && o instanceof Boolean) {
           return (boolean) o;
@@ -83,10 +86,11 @@ public class Connection {
         poi l'azione da compiere, forse ha più senso inviare una coppia <User, String> dove String è l'azione da compiere
         quindi login, closeConnection, readEmails. in questo modo non è necessario inviare troppe cose
          */
-        outputStream.writeObject(this.user);
+        //outputStream.writeObject(this.user);
+        //Object o = inputStream.readObject();
+        //outputStream.writeObject("read_emails");
+        outputStream.writeObject(new Command(this.user, "read_emails", null));
         Object o = inputStream.readObject();
-        outputStream.writeObject("read_emails");
-        o = inputStream.readObject();
         System.out.println("email lato client:\n" + o);
         if (o != null && o instanceof EmailBox) {
           EmailBox emailBox = (EmailBox) o;
