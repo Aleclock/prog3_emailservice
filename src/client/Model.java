@@ -34,6 +34,10 @@ public class Model {
     this.user = user;
   }
 
+  public User getUser() {
+    return this.user;
+  }
+
   public void closeConnection() {
     if (this.connection != null) {
       connection.close();

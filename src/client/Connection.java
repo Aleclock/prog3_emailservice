@@ -8,8 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 
 public class Connection {
   private Socket socket;
@@ -20,14 +18,12 @@ public class Connection {
 
   public Connection() {}
 
-  public void setUser(User user) throws IOException {
-    if (user != null && outputStream != null) {
-      outputStream.writeObject(user);
-    }
+  public void setUser(User user) {
+    this.user = user;
   }
 
   /**
-   * Crea un socket sulla porta 8189, crea stream input/output di oggetti
+   * Open server connection (socket, port 8189), create object input/output stream
    */
   public void connect(){
     try {
@@ -42,6 +38,9 @@ public class Connection {
     }
   }
 
+  /**
+   * Close connection with server
+   */
   public void close() {
     if (this.socket != null) {
       try {
@@ -56,9 +55,11 @@ public class Connection {
     }
   }
 
+  /**
+   * Send to server User object and retrieve true/false if user's mail exists or not
+   */
   public boolean login(String email){
     if (outputStream != null) {
-      System.out.println(email);
       try {
         outputStream.writeObject(new User(email));
         Object o = inputStream.readObject();

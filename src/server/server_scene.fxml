@@ -48,7 +48,7 @@
       </Label>
       <Separator layoutX="11.0" layoutY="53.0" prefHeight="0.0" prefWidth="600.0" />
       <Label contentDisplay="TEXT_ONLY" layoutX="512.0" layoutY="19.0" prefHeight="17.0" prefWidth="48.0" text="Server" textAlignment="CENTER" />
-      <ToggleButton alignment="TOP_LEFT" layoutX="569.0" layoutY="14.0" mnemonicParsing="false" text="OFF" textAlignment="CENTER" />
+      <ToggleButton fx:id="toggle_server_status" onAction="#handleServerStatus" alignment="TOP_LEFT" layoutX="569.0" layoutY="14.0" mnemonicParsing="false" text="OFF" textAlignment="CENTER" />
       <TextArea fx:id="console" editable="false" layoutX="11.0" layoutY="66.0" prefHeight="307.0" prefWidth="600.0" />
    </children>
 </AnchorPane>

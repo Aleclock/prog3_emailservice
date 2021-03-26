@@ -1,8 +1,10 @@
 package server;
 
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.ToggleButton;
 
 import java.io.Console;
 import java.io.OutputStream;
@@ -14,12 +16,29 @@ public class Controller {
   @FXML
   private TextArea console;
   @FXML
-
+  private ToggleButton toggle_server_status;
 
   public void initialize() {
     this.ps = new PrintStream(new Console(console), true);
     //System.setOut(ps);
     System.setErr(ps);
+  }
+
+  @FXML
+  private void handleServerStatus(Event event){
+    if (toggle_server_status.isSelected()) {
+      play();
+    } else {
+      pause();
+    }
+  }
+
+  private void play() {
+    this.server.startServer();
+  }
+
+  private void pause() {
+    this.server.stopServer();
   }
 
   public PrintStream getPrintStream() {

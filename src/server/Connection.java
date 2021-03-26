@@ -1,13 +1,10 @@
 package server;
 
+import lib.EmailBox;
 import lib.User;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Connection implements Runnable{
@@ -18,6 +15,7 @@ public class Connection implements Runnable{
   private ObjectInputStream inputStream;
   private ObjectOutputStream outputStream;
   private List<String> userList;
+  private EmailBox emails;
   private boolean closed = false;
 
   public Connection(Model model, Socket socket, List<String> userList, PrintStream ps) {
@@ -38,7 +36,7 @@ public class Connection implements Runnable{
   @Override
   public void run() {
     try {
-      String command = null;
+      String command = null; // TODO capire se userlo e come
       Object o = null;
       if (!closed) {
         try {
@@ -46,7 +44,10 @@ public class Connection implements Runnable{
             if (o instanceof User) {
               if (verifyUser((User) o)) {
                 this.model.addUser((User) o);
+                this.user = (User) o;
                 outputStream.writeObject(true);
+                this.model.getOrCreateEmailBox(this.user);
+                ps.println(this.user.getUserName() + " logged in");
                 handleCall();
               } else {
                 outputStream.writeObject(false);
@@ -76,7 +77,7 @@ public class Connection implements Runnable{
     if (!closed) {
       try {
         if (this.user != null) {
-          ps.println(this.user.getUserName() + "closed connection");
+          ps.println(this.user.getUserName() + " closed connection");
         }
         inputStream.close();
         outputStream.close();

@@ -23,7 +23,7 @@ public class Server extends Thread{
   private boolean stop = false;
 
   Server(PrintStream ps) {
-    this.model = new Model();
+    this.model = new Model(ps);
     this.ps = ps;
     initUserList();
     this.setDaemon(true);
@@ -62,7 +62,7 @@ public class Server extends Thread{
   }
 
   private void initUserList(){
-    File file = new File("/Users/aleclock/Desktop/uni/prog3/prog3_emailservice/src/server/data/users.txt");
+    File file = new File("src/server/data/users.txt");
     try {
       Scanner scanner = new Scanner(file);
       while (scanner.hasNextLine()) {
