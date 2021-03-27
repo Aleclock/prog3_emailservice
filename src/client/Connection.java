@@ -10,6 +10,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Connection {
@@ -89,8 +91,8 @@ public class Connection {
         //outputStream.writeObject(this.user);
         //Object o = inputStream.readObject();
         //outputStream.writeObject("read_emails");
-        outputStream.writeObject(new Command(this.user, "read_emails", null));
-        Object o = inputStream.readObject();
+        this.outputStream.writeObject(new Command(this.user, "read_emails", null));
+        Object o = this.inputStream.readObject();
         System.out.println("email lato client:\n" + o);
         if (o != null && o instanceof EmailBox) {
           EmailBox emailBox = (EmailBox) o;
@@ -103,6 +105,26 @@ public class Connection {
       }
     }
     return emails;
+  }
+
+  public String sendEmail(User user, List<User> recipients, String subject, String body) {
+    String message = "";
+    if (this.outputStream != null) {
+      try {
+        Email email = new Email(user, recipients, subject, body);
+        System.out.println(this.user);
+        Command command = new Command(this.user, "send_email", email);
+        System.out.println(command);
+        this.outputStream.writeObject(command);
+        Object o=inputStream.readObject();
+        if (o != null && o instanceof String) {
+          message = (String) o;
+        }
+      } catch (IOException | ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+    }
+    return message;
   }
 
   public boolean isConnected() {

@@ -4,11 +4,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lib.User;
 
@@ -22,6 +21,10 @@ public class Controller {
   private TextField tf_email;
   @FXML
   private Label label_error;
+  @FXML
+  private TextField tf_recipients, tf_subject;
+  @FXML
+  private TextArea ta_body;
 
   public void initModel(Model model) {
     this.model = model;
@@ -49,7 +52,6 @@ public class Controller {
         Button refresh = (Button) loader.getNamespace().get("refresh");
         Controller controller = loader.getController();
         controller.initModel(this.model);
-        System.out.println(this.model);
         refresh.fire();
         //TextField foo = (TextField)loader.getNamespace().get("exampleFxId");
       } catch(IOException ex) {
@@ -68,12 +70,42 @@ public class Controller {
 
   @FXML
   public void handleRefreshButton(ActionEvent event) {
-    System.out.println(this.model);
     this.model.retrieveEmails();
   }
 
   @FXML
   public void handleNewMailButton(ActionEvent event) {
+    Parent root;
+    try {
+    FXMLLoader loader = new FXMLLoader();
+    loader.setLocation(getClass().getResource("res/new_email_scene.fxml"));
+    Scene scene = new Scene(loader.load());
+    Stage stage = new Stage();
+    stage.setTitle(this.model.getUser().getUserName() + " - New email");
+    stage.setScene(scene);
+    stage.show();
+
+    Controller cont = loader.getController();
+    cont.initModel(model);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @FXML
+  public void handleSendEmail(ActionEvent event) {
+    String body = ta_body.getText();
+    String recipients = tf_recipients.getText();
+    String subject = tf_subject.getText();
+    if (subject.equals("")) {
+      subject = "(no subject)";
+    }
+
+    try {
+      this.model.requestSendMail(recipients, subject, body);
+    } catch(IOException e) {
+      // TODO gestire errori e messaggi
+    }
   }
 
   private boolean matchesEmailFormat(String email) {

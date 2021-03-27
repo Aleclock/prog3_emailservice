@@ -91,7 +91,7 @@ public class Connection implements Runnable{
   }
 
   private void handleCall(Command command) throws IOException, ClassNotFoundException {
-    System.out.println("handleCall");
+    System.out.println(command.getUser().getUserName() + " - " + command.getCommandKey());
     if (!closed) {
       Object o;
       try {
