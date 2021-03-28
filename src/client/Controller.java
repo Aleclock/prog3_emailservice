@@ -1,5 +1,6 @@
 package client;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,8 +8,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import lib.Email;
 import lib.User;
 
 import java.io.IOException;
@@ -50,8 +52,13 @@ public class Controller {
         Stage stage = (Stage) root.getScene().getWindow();
         stage.setTitle(this.model.getUser().getUserName());
         Button refresh = (Button) loader.getNamespace().get("refresh");
+        ListView lv_emails = (ListView) loader.getNamespace().get("lv_emails");
         Controller controller = loader.getController();
         controller.initModel(this.model);
+        initListView(lv_emails);
+        // TODO aggiungere listener relativi alla connessione (se il server è down o qualcosa del genere)
+        // TODO aggiungere listener alla lista di email in modo tale che si aggiorni in automatico
+        this.model.refreshEmailList();
         refresh.fire();
         //TextField foo = (TextField)loader.getNamespace().get("exampleFxId");
       } catch(IOException ex) {
@@ -102,10 +109,24 @@ public class Controller {
     }
 
     try {
-      this.model.requestSendMail(recipients, subject, body);
+      String message = this.model.requestSendMail(recipients, subject, body);
+      // TODO stampare messaggio da qualche parte
+      // TODO update list
     } catch(IOException e) {
       // TODO gestire errori e messaggi
     }
+  }
+
+  private void initListView(ListView lv_emails) {
+    ObservableList<Email> emailList = this.model.getEmails();
+    System.out.println(lv_emails);
+    lv_emails.setItems(emailList);
+    lv_emails.setCellFactory(new Callback<ListView<Email>, ListCell<Email>>() {
+        @Override
+        public ListCell<Email> call(ListView<Email> emailListView) {
+          return new CustomListViewItem();
+        }
+    });
   }
 
   private boolean matchesEmailFormat(String email) {

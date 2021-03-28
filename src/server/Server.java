@@ -25,7 +25,6 @@ public class Server extends Thread{
   Server(PrintStream ps) {
     this.model = new Model(ps);
     this.ps = ps;
-    initUserList();
     this.setDaemon(true);
     start();
   }
@@ -43,7 +42,7 @@ public class Server extends Thread{
       while (!stop) {
         try {
           Socket client = serverSocket.accept();
-          Connection connection = new Connection(model, client, userList, ps);
+          Connection connection = new Connection(model, client, ps);
           executorService.execute(connection);
           //connectionList.add(connection);
         } catch(SocketTimeoutException ex){
@@ -59,21 +58,6 @@ public class Server extends Thread{
     Thread thread = new Thread(this);
     thread.setDaemon(true);
     thread.start();
-  }
-
-  private void initUserList(){
-    File file = new File("src/server/data/users.txt");
-    try {
-      Scanner scanner = new Scanner(file);
-      while (scanner.hasNextLine()) {
-        String email = scanner.nextLine();
-        System.out.println(email);
-        userList.add(email);
-      }
-      scanner.close();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
   }
 
   void stopServer() {

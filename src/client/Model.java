@@ -1,5 +1,6 @@
 package client;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lib.Email;
@@ -10,15 +11,17 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 public class Model {
   private Connection connection;
   private User user;
-  private final ObservableList<Email> mails;
+  private final ObservableList<Email> emails;
 
 
   public Model() {
     this.connection = new Connection();
-    this.mails = FXCollections.observableList(new ArrayList<Email>());
+    this.emails = FXCollections.observableList(new ArrayList<Email>());
   }
 
   public void connectUser() throws SocketException {
@@ -26,6 +29,30 @@ public class Model {
     if (!this.connection.isConnected()) {
       throw new SocketException("Impossibile raggiungere il server");
     }
+  }
+
+  /**
+   * Create a thread that call retrieveEmails method every 5000 seconds, in order to update client emails list
+   */
+  public void refreshEmailList() {
+    Thread emailRefresh = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        // TODO capire se farlo dipendere dallo stato della connessione
+        while (true) {
+          try {
+            sleep(5000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          Platform.runLater(() -> {
+            retrieveEmails();
+          });
+        }
+      }
+    });
+    //emailRefresh.setDaemon(true); // TODO capire a cosa serve
+    emailRefresh.start();
   }
 
   public String requestSendMail(String recipients, String subject, String body) throws IOException {
@@ -38,14 +65,26 @@ public class Model {
     } else {
       connectUser();
       message = this.connection.sendEmail(this.user, recipientsList, subject, body);
+      System.out.println(message);
     }
     return message;
   }
 
-  public void retrieveEmails() {
+  /*
+  synchronized in modo tale che se più thread tentano di eseguire questo metodo, non lo fanno in contemporanea. Se
+  il metodo è disponibile, il primo thread può accedere, mentre se è occupato il thread viene messo in coda fino a quando
+  non è disponibile
+   */
+  synchronized public void retrieveEmails() {
     try {
       connectUser();
       List<Email> newEmail = this.connection.getEmails();
+      System.out.println(newEmail);
+      synchronized (this.emails) {
+        this.emails.addAll(newEmail);
+        // TODO rimuovere da newEmail le liste già presenti in this.emails
+        // TODO aggiungere a this.emails le rimanenti email presenti in newEmail
+      }
     } catch (SocketException e) {
       e.printStackTrace();
     }
@@ -61,6 +100,11 @@ public class Model {
 
   public User getUser() {
     return this.user;
+  }
+
+  public ObservableList<Email> getEmails() {
+    retrieveEmails();
+    return this.emails;
   }
 
   public void closeConnection() {

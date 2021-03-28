@@ -14,6 +14,10 @@ public class EmailBox implements Serializable {
 
   // TODO valutare se aggiungere il setter
 
+  public void addEmails(List<Email> emails) {
+    this.emailList.addAll(0, emails);
+  }
+
   public User getUser() {
     return this.user;
   }

@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Email implements Serializable {
-  private int uuid;
+  private long uuid;
   private User sender;
   private List<User> recipients;
   private Date dateSent;
@@ -14,7 +14,6 @@ public class Email implements Serializable {
   private String body;
   private boolean read;
 
-  // TODO capire come viene impostata la data
   // TODO generare ID
 
   public Email(User sender, List<User> recipients, String subject, String body) {
@@ -28,7 +27,7 @@ public class Email implements Serializable {
   }
 
   private void setValues(User sender, List<User> recipients, Date dateSent, String subject, String body) {
-    this.uuid = 0;
+    this.uuid = setUuid();
     this.sender = sender;
     this.recipients = recipients;
     this.dateSent = dateSent;
@@ -37,7 +36,19 @@ public class Email implements Serializable {
     this.read = false;
   }
 
-  public int getUuid() {
+  // TODO trovare un modo per impostare l'id
+  public long setUuid() {
+    long id = 0;
+    /*
+    id += this.sender.hashCode();
+    id += this.recipients.hashCode();
+    id += this.dateSent.getTime();
+    id += this.subject.hashCode();
+    id += this.body.hashCode();*/
+    return id;
+  }
+
+  public long getUuid() {
     return this.uuid;
   }
 

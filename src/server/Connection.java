@@ -2,6 +2,7 @@ package server;
 
 import javafx.util.Pair;
 import lib.Command;
+import lib.Email;
 import lib.EmailBox;
 import lib.User;
 
@@ -16,15 +17,13 @@ public class Connection implements Runnable{
   private User user;
   private ObjectInputStream inputStream;
   private ObjectOutputStream outputStream;
-  private List<String> userList;
   private EmailBox emails;
   private boolean closed = false;
 
-  public Connection(Model model, Socket socket, List<String> userList, PrintStream ps) {
+  public Connection(Model model, Socket socket, PrintStream ps) {
     this.ps = ps;
     this.model = model;
     this.socket = socket;
-    this.userList = userList;
     try {
       this.inputStream = new ObjectInputStream(socket.getInputStream());
       this.outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -69,7 +68,7 @@ public class Connection implements Runnable{
   }
 
   private boolean verifyUser(User user) {
-    return this.userList.contains(user.getUserName());
+    return this.model.existUser(user);
   }
 
   private void closeConnection() {
@@ -101,10 +100,12 @@ public class Connection implements Runnable{
             break;
           case "close_connection":
             freeUser();
-            closeConnection();
             break;
           case "read_emails":
             readEmails();
+            break;
+          case "send_email":
+            sendEmail(command.getEmails());
             break;
           default:
             break;
@@ -138,11 +139,22 @@ public class Connection implements Runnable{
   }
 
   private void readEmails() throws IOException{
-    System.out.println("Adesso recupero le mail");
     if (!closed) {
       EmailBox emailBox = model.getEmailBox(this.user);
-      System.out.println("Email lato server \n" + emailBox);
       this.outputStream.writeObject(emailBox);
+    }
+  }
+
+  private void sendEmail(Email email) throws IOException{
+    if (!closed) {
+      boolean operation_result;
+      operation_result = this.model.sendEmail(email);
+      this.outputStream.writeObject(operation_result);
+      if (operation_result) {
+        this.ps.println(this.user.getUserName() + " : sent successfully.");
+      } else {
+        this.ps.println(this.user.getUserName() + " : sending mail failed");
+      }
     }
   }
 

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Circle fx:id="circle_status" fill="DODGERBLUE" layoutX="24.0" layoutY="68.0" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+      <VBox layoutX="50.0" layoutY="13.0" prefHeight="111.0" prefWidth="531.0">
+         <children>
+            <HBox prefWidth="200.0">
+               <children>
+                  <Label fx:id="label_recipients" prefHeight="17.0" prefWidth="393.0"/>
+                  <Label fx:id="label_date" text="Date" />
+               </children>
+            </HBox>
+            <Label fx:id="label_subject" prefHeight="17.0" prefWidth="540.0" text="Subject" />
+            <Label fx:id="label_body_preview" alignment="TOP_LEFT" prefHeight="78.0" prefWidth="536.0" text="Body preview" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
