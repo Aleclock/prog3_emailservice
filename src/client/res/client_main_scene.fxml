@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="804.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.Controller">
    <top>
       <AnchorPane prefHeight="46.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -23,8 +23,8 @@
                </graphic>
             </Button>
             <Button fx:id="refresh" layoutX="14.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleRefreshButton" text="Refresh" />
-            <Button layoutX="532.0" layoutY="20.0" mnemonicParsing="false" text="Delete" />
-            <Button layoutX="483.0" layoutY="20.0" mnemonicParsing="false" text="Flag" />
+            <Button layoutX="688.0" layoutY="21.0" mnemonicParsing="false" text="Delete" />
+            <Button layoutX="483.0" layoutY="20.0" mnemonicParsing="false" text="Flag" AnchorPane.rightAnchor="15.5" />
             <Separator layoutX="13.0" layoutY="56.0" prefHeight="0.0" prefWidth="574.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" />
          </children>
       </AnchorPane>
@@ -39,9 +39,9 @@
       </VBox>
    </left>
    <center>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="341.0" prefWidth="650.0" BorderPane.alignment="CENTER">
          <children>
-            <ListView fx:id="lv_emails" layoutX="9.0" layoutY="3.0" prefHeight="333.0" prefWidth="204.0" />
+            <ListView fx:id="lv_emails" layoutX="9.0" layoutY="3.0" prefHeight="333.0" prefWidth="282.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="9.0" AnchorPane.topAnchor="3.0" />
          </children>
       </AnchorPane>
    </center>

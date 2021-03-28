@@ -22,12 +22,14 @@ public class Model {
     initUserList();
   }
 
-  public void getOrCreateEmailBox(User user) {
+  // TODO ha senso tenere this.emailBox o no?
+  public EmailBox getOrCreateEmailBox(User user) {
     this.emailBox = getEmailBox(user);
     if (this.emailBox == null) {
       createEmptyEmailBox(user);
       this.emailBox = getEmailBox(user);
     }
+    return this.emailBox;
   }
 
   public EmailBox getEmailBox(User user) {
@@ -56,7 +58,9 @@ public class Model {
     addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), emails);
     for (User recipient : email.getRecipients()) {
       if (existUser(recipient)) {
-        EmailBox emailBox = getEmailBox(recipient);
+        // TODO nel caso in cui non esista la xcasella email del destinatario, va creata
+        //EmailBox emailBox = getEmailBox(recipient);
+        EmailBox emailbox = getOrCreateEmailBox(recipient);
         done = addEmailToEmailBox(recipient, emailBox, emails);
       } else {
         this.ps.println(recipient.getUserName() + " not exist: Sending mail failed");
@@ -70,6 +74,8 @@ public class Model {
   // TODO lista di Email perchè forse potrebbero esserci più email da inviare nello stesso momento, non so da vedere
   private boolean addEmailToEmailBox(User user, EmailBox emailBox, List<Email> emails) {
     boolean done = false;
+    System.out.println("emailbox " + emailBox);
+    System.out.println("emails " + emails);
     emailBox.addEmails(emails);
     String filePath = this.dataPath + user.getUserName() + ".json";
     try {

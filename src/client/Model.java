@@ -81,9 +81,11 @@ public class Model {
       List<Email> newEmail = this.connection.getEmails();
       System.out.println(newEmail);
       synchronized (this.emails) {
-        this.emails.addAll(newEmail);
-        // TODO rimuovere da newEmail le liste già presenti in this.emails
-        // TODO aggiungere a this.emails le rimanenti email presenti in newEmail
+        if (!newEmail.isEmpty()) {
+          newEmail.removeAll(this.emails);
+          System.out.println(newEmail);
+          this.emails.addAll(newEmail);
+        }
       }
     } catch (SocketException e) {
       e.printStackTrace();

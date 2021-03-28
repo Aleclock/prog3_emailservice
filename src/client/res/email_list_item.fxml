@@ -5,21 +5,24 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Circle fx:id="circle_status" fill="DODGERBLUE" layoutX="24.0" layoutY="68.0" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
-      <VBox layoutX="50.0" layoutY="13.0" prefHeight="111.0" prefWidth="531.0">
+      <Circle fx:id="circle_status" fill="DODGERBLUE" layoutX="20.0" layoutY="49.0" radius="6.0" stroke="DODGERBLUE" strokeType="INSIDE" />
+      <VBox layoutX="50.0" layoutY="13.0" prefHeight="74.0" prefWidth="531.0">
          <children>
             <HBox prefWidth="200.0">
                <children>
-                  <Label fx:id="label_recipients" prefHeight="17.0" prefWidth="393.0"/>
+                  <Label fx:id="label_recipients" prefHeight="17.0" prefWidth="393.0" wrapText="true" />
                   <Label fx:id="label_date" text="Date" />
                </children>
             </HBox>
-            <Label fx:id="label_subject" prefHeight="17.0" prefWidth="540.0" text="Subject" />
-            <Label fx:id="label_body_preview" alignment="TOP_LEFT" prefHeight="78.0" prefWidth="536.0" text="Body preview" />
+            <Label fx:id="label_subject" prefHeight="17.0" prefWidth="540.0" text="Subject" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font></Label>
+            <Label fx:id="label_body_preview" alignment="TOP_LEFT" prefHeight="78.0" prefWidth="536.0" text="Body preview" textFill="#929292" wrapText="true" />
          </children>
       </VBox>
    </children>

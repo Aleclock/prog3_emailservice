@@ -82,16 +82,13 @@ public class Connection {
     List<Email> emails = null;
     if (this.outputStream != null) {
       try {
-        /* TODO il discorso è che ogni volta viene creata una nuova connessione, quindi è necessario inviare prima l'utente e
-        poi l'azione da compiere, forse ha più senso inviare una coppia <User, String> dove String è l'azione da compiere
-        quindi login, closeConnection, readEmails. in questo modo non è necessario inviare troppe cose
+        /**
+         * il discorso è che ogni volta viene creata una nuova connessione, quindi è necessario inviare prima l'utente e
+         * poi l'azione da compiere, forse ha più senso inviare una coppia <User, String> dove String è l'azione da compiere
+         * quindi login, closeConnection, readEmails. in questo modo non è necessario inviare troppe cose
          */
-        //outputStream.writeObject(this.user);
-        //Object o = inputStream.readObject();
-        //outputStream.writeObject("read_emails");
         this.outputStream.writeObject(new Command(this.user, "read_emails", null));
         Object o = this.inputStream.readObject();
-        System.out.println("email lato client:\n" + o);
         if (o != null && o instanceof EmailBox) {
           EmailBox emailBox = (EmailBox) o;
           emails = emailBox.getEmailList();

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Email implements Serializable {
   private long uuid;
@@ -14,7 +15,7 @@ public class Email implements Serializable {
   private String body;
   private boolean read;
 
-  // TODO generare ID
+  // TODO capire se ha più senso impostare l'id a livello di server o quando viene creato l'oggetto Email
 
   public Email(User sender, List<User> recipients, String subject, String body) {
     setValues(sender, recipients, new Date(), subject, body);
@@ -27,24 +28,24 @@ public class Email implements Serializable {
   }
 
   private void setValues(User sender, List<User> recipients, Date dateSent, String subject, String body) {
-    this.uuid = setUuid();
     this.sender = sender;
     this.recipients = recipients;
     this.dateSent = dateSent;
     this.subject = subject;
     this.body = body;
     this.read = false;
+    this.uuid = setUuid();
+    System.out.println(setUuid());
   }
 
   // TODO trovare un modo per impostare l'id
   public long setUuid() {
-    long id = 0;
-    /*
+    Long id = 0L;
     id += this.sender.hashCode();
     id += this.recipients.hashCode();
-    id += this.dateSent.getTime();
+    id += this.dateSent.hashCode();
     id += this.subject.hashCode();
-    id += this.body.hashCode();*/
+    id += this.body.hashCode();
     return id;
   }
 
@@ -78,5 +79,21 @@ public class Email implements Serializable {
 
   public void setRead(boolean r) {
     this.read = r;
+  }
+
+  public String recipientsAsString() {
+    return this.recipients.stream().map(User::getUserName).collect(Collectors.joining(" , "));
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    boolean areEqual = false;
+    if (obj instanceof Email) {
+      Email email = (Email) obj;
+      if (email.uuid == this.uuid) {
+        areEqual = true;
+      }
+    }
+    return areEqual;
   }
 }

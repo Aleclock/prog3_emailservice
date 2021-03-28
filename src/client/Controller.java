@@ -111,7 +111,7 @@ public class Controller {
     try {
       String message = this.model.requestSendMail(recipients, subject, body);
       // TODO stampare messaggio da qualche parte
-      // TODO update list
+      // TODO valutare se aggiungere direttamente la mail alla lista se tutto è andato bene
     } catch(IOException e) {
       // TODO gestire errori e messaggi
     }

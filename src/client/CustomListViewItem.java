@@ -17,6 +17,7 @@ public class CustomListViewItem extends ListCell<Email> {
   private Label date;
   private Circle status;
 
+  // TODO modificare visualizzazione della data e forse dei destinatari
 
   public CustomListViewItem() {
     super();
@@ -39,10 +40,12 @@ public class CustomListViewItem extends ListCell<Email> {
     super.updateItem(email, empty);
     if (email != null && !empty) {
       this.subject.setText(email.getSubject());
-      this.recipients.setText(email.getRecipients().toString());
+      this.recipients.setText(email.recipientsAsString());
       this.date.setText(email.getDateSent().toString());
-      this.body_preview.setText(email.getBody()); // TODO ridurre il testo della mail a qualche carattere
-      // TODO impostare status (if email.hasBeenRead())
+      this.body_preview.setText(email.getBody());
+      if (email.hasBeenRead()) {
+        this.status.setVisible(false);
+      }
       setGraphic(item);
     } else {
       setGraphic(null);
