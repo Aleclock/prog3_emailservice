@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// TODO https://stackoverflow.com/questions/18791566/notserializableexception-on-simplelistproperty
+
 public class Email implements Serializable {
   private long uuid;
   private User sender;
@@ -35,7 +37,6 @@ public class Email implements Serializable {
     this.body = body;
     this.read = false;
     this.uuid = setUuid();
-    System.out.println(setUuid());
   }
 
   // TODO trovare un modo per impostare l'id

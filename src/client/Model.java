@@ -1,9 +1,11 @@
 package client;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lib.Email;
+import lib.EmailProperty;
 import lib.User;
 
 import java.io.IOException;
@@ -17,6 +19,7 @@ public class Model {
   private Connection connection;
   private User user;
   private final ObservableList<Email> emails;
+  private SimpleObjectProperty<EmailProperty> currentEmailSelected = new SimpleObjectProperty<>(null);
 
 
   public Model() {
@@ -79,12 +82,12 @@ public class Model {
     try {
       connectUser();
       List<Email> newEmail = this.connection.getEmails();
-      System.out.println(newEmail);
+      // TODO da consegna dovrebbe creare un popup nel caso di nuove mail, in pratica le aggiunge semplicemente in testa
+      // TODO qua andrebbe gestita la sezione ricevute/inviate
       synchronized (this.emails) {
         if (!newEmail.isEmpty()) {
           newEmail.removeAll(this.emails);
-          System.out.println(newEmail);
-          this.emails.addAll(newEmail);
+          this.emails.addAll(0, newEmail);
         }
       }
     } catch (SocketException e) {
@@ -125,6 +128,14 @@ public class Model {
       userList.add(new User(email));
     }
     return userList;
+  }
+
+  public void setCurrentEmail(EmailProperty emailProperty) {
+    this.currentEmailSelected.set(emailProperty);
+  }
+
+  public SimpleObjectProperty<EmailProperty> getCurrentEmailSelected() {
+    return this.currentEmailSelected;
   }
 
 }
