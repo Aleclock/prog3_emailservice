@@ -138,4 +138,9 @@ public class Model {
     return this.currentEmailSelected;
   }
 
+  public boolean matchesEmailFormat(String email) {
+    String regex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
+    return email.matches(regex);
+  }
+
 }

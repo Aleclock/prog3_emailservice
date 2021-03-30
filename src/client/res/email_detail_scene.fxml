@@ -11,10 +11,10 @@
    <children>
       <AnchorPane prefHeight="37.0" prefWidth="600.0">
          <children>
-            <Button fx:id="btn_reply_all" onAction="#handleReplyAll" layoutX="435.0" layoutY="6.0" mnemonicParsing="false" text="Rispondi a tutti" />
-            <Button fx:id="btn_delete_email" onAction="#handleDeleteEmail" layoutX="533.0" layoutY="6.0" mnemonicParsing="false" text="Delete" AnchorPane.rightAnchor="10.0" />
-            <Button fx:id="btn_reply" onAction="#handleReply" layoutX="365.0" layoutY="6.0" mnemonicParsing="false" text="Rispondi" />
-            <Button fx:id="forward" onAction="#handleForward" layoutX="309.0" layoutY="6.0" mnemonicParsing="false" text="Inoltra" />
+            <Button onAction="#handleReplyAll" layoutX="435.0" layoutY="6.0" mnemonicParsing="false" text="Rispondi a tutti" />
+            <Button onAction="#handleDeleteEmail" layoutX="533.0" layoutY="6.0" mnemonicParsing="false" text="Delete" AnchorPane.rightAnchor="10.0" />
+            <Button onAction="#handleReply" layoutX="365.0" layoutY="6.0" mnemonicParsing="false" text="Rispondi" />
+            <Button onAction="#handleForward" layoutX="309.0" layoutY="6.0" mnemonicParsing="false" text="Inoltra" />
          </children>
       </AnchorPane>
       <AnchorPane prefHeight="91.0" prefWidth="600.0">

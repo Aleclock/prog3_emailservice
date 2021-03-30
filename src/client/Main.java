@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-  Controller controller;
+  LoginController loginController;
 
   @Override
   public void start(Stage stage) throws Exception {
@@ -17,14 +17,14 @@ public class Main extends Application {
     stage.setScene(scene);
     stage.show();
 
-    controller = loader.getController();
-    controller.initModel(new Model());
+    loginController = loader.getController();
+    loginController.initModel(new Model());
   }
 
   @Override
   public void stop() throws Exception {
-    //controller.removeListener();
-    controller.getModel().closeConnection();
+    //controller.removeListener(); TODO capire che ascoltatori rimuovere
+    loginController.getModel().closeConnection();
   }
 
   public static void main (String[] args) {

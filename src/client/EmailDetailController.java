@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
@@ -14,8 +13,6 @@ public class EmailDetailController {
   private Model model;
   @FXML
   private Label label_recipipients, label_subject, label_sender, label_date, label_body;
-  @FXML
-  private Button btn_delete_email, btn_reply_all, btn_reply, forward;
 
   public void initModel(Model model) {
     this.model = model;
