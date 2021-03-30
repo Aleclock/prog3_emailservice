@@ -1,9 +1,14 @@
 package client;
 
-import javafx.beans.property.Property;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class EmailDetailController {
   private Model model;
@@ -26,5 +31,49 @@ public class EmailDetailController {
     });
   }
 
+  @FXML
+  public void handleReplyAll(ActionEvent event) {
+    NewEmailController controller = loadNewMailScene();
+    // TODO gestire, inviare a tutti tranne a te (recipients + sender)
+  }
 
+  @FXML
+  public void handleDeleteEmail (ActionEvent event) {
+    NewEmailController controller = loadNewMailScene();
+    // TODO gestire
+  }
+
+  @FXML
+  public void handleReply (ActionEvent event) {
+    NewEmailController controller = loadNewMailScene();
+    controller.setRecipients(this.label_sender.textProperty().get());
+    controller.setSubject ("RE: " + this.label_subject.textProperty().get());
+  }
+
+  @FXML
+  public void handleForward (ActionEvent event) {
+    NewEmailController controller = loadNewMailScene();
+    controller.setSubject (this.label_subject.textProperty().get());
+    controller.setBody(this.label_body.textProperty().get());
+  }
+
+  private NewEmailController loadNewMailScene() {
+    try {
+      FXMLLoader loader = new FXMLLoader();
+      loader.setLocation(getClass().getResource("res/new_email_scene.fxml"));
+      Scene scene = new Scene(loader.load());
+      Stage stage = new Stage();
+      stage.setTitle(this.model.getUser().getUserName() + " - New email");
+      stage.setScene(scene);
+      stage.show();
+
+      NewEmailController controller = loader.getController();
+      controller.initModel(model);
+      return controller;
+    } catch (IOException e) {
+      System.out.println("ERRORE nel caricamento di new_email_scene.fxml");
+      e.printStackTrace();
+    }
+    return null;
+  }
 }

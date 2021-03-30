@@ -102,36 +102,18 @@ public class Controller {
   @FXML
   public void handleNewMailButton(ActionEvent event) {
     try {
-    FXMLLoader loader = new FXMLLoader();
-    loader.setLocation(getClass().getResource("res/new_email_scene.fxml"));
-    Scene scene = new Scene(loader.load());
-    Stage stage = new Stage();
-    stage.setTitle(this.model.getUser().getUserName() + " - New email");
-    stage.setScene(scene);
-    stage.show();
+      FXMLLoader loader = new FXMLLoader();
+      loader.setLocation(getClass().getResource("res/new_email_scene.fxml"));
+      Scene scene = new Scene(loader.load());
+      Stage stage = new Stage();
+      stage.setTitle(this.model.getUser().getUserName() + " - New email");
+      stage.setScene(scene);
+      stage.show();
 
-    Controller cont = loader.getController();
-    cont.initModel(model);
+      NewEmailController newEmailController = loader.getController();
+      newEmailController.initModel(model);
     } catch (IOException e) {
       e.printStackTrace();
-    }
-  }
-
-  @FXML
-  public void handleSendEmail(ActionEvent event) {
-    String body = ta_body.getText();
-    String recipients = tf_recipients.getText();
-    String subject = tf_subject.getText();
-    if (subject.equals("")) {
-      subject = "(no subject)";
-    }
-
-    try {
-      String message = this.model.requestSendMail(recipients, subject, body);
-      // TODO stampare messaggio da qualche parte
-      // TODO valutare se aggiungere direttamente la mail alla lista se tutto è andato bene
-    } catch(IOException e) {
-      // TODO gestire errori e messaggi
     }
   }
 
@@ -157,12 +139,6 @@ public class Controller {
 
       this.pane_email_detail.getChildren().addAll(scene.getRoot());
       this.pane_email_detail.setVisible(false);
-
-      /*this.label_recipipients = (Label) loader.getNamespace().get("label_recipipients");
-      this.label_subject = (Label) loader.getNamespace().get("label_subject");
-      this.label_sender = (Label) loader.getNamespace().get("label_sender");
-      this.label_date = (Label) loader.getNamespace().get("label_date");
-      this.label_body = (Label) loader.getNamespace().get("label_body");*/
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -175,22 +151,6 @@ public class Controller {
       Email email = (Email) newSelection;
       this.model.setCurrentEmail(new EmailProperty(email));
       // TODO set email selected
-      //this.model.setEmailRead(newSelection);
-      /*this.label_recipipients.setText(email.recipientsAsString());
-      this.label_subject.setText(email.getSubject());
-      this.label_sender.setText(email.getSender().getUserName());
-      this.label_date.setText(email.getDateSent().toString());
-      this.label_body.setText(email.getBody());*/
-      // TODO open this email in email_page
-    });
-
-    lv_emails.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-      @Override
-      public void changed(ObservableValue observableValue, Object o, Object t1) {
-        if (!listAlreadySelected) {
-
-        }
-      }
     });
   }
 
