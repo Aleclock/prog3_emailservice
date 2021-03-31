@@ -58,8 +58,6 @@ public class Model {
     addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), emails);
     for (User recipient : email.getRecipients()) {
       if (existUser(recipient)) {
-        // TODO nel caso in cui non esista la xcasella email del destinatario, va creata
-        //EmailBox emailBox = getEmailBox(recipient);
         EmailBox emailbox = getOrCreateEmailBox(recipient);
         done = addEmailToEmailBox(recipient, emailBox, emails);
       } else {
@@ -71,17 +69,25 @@ public class Model {
     return done;
   }
 
-  // TODO lista di Email perchè forse potrebbero esserci più email da inviare nello stesso momento, non so da vedere
+  public boolean setEmailRead (User user, Email email, boolean read) {
+    boolean done = false;
+    EmailBox emailBox = getEmailBox(user);
+    List<Email> emails = emailBox.getEmailList();
+    int emailIndex = emails.indexOf(email);
+    emails.get(emailIndex).setRead(read);
+    System.out.println( emails.get(emailIndex));
+    done = writeEmailBoxAsJSON(emailBox, user);
+    return done;
+  }
+
+  // TODO c'è la lista di Email perchè forse potrebbero esserci più email da inviare nello stesso momento, non so da vedere
   private boolean addEmailToEmailBox(User user, EmailBox emailBox, List<Email> emails) {
     boolean done = false;
-    System.out.println("emailbox " + emailBox);
-    System.out.println("emails " + emails);
     emailBox.addEmails(emails);
     String filePath = this.dataPath + user.getUserName() + ".json";
     try {
       Writer writer = new FileWriter(filePath);
       Gson gson = new GsonBuilder().setPrettyPrinting().create();
-      System.out.println(gson.toJsonTree(emailBox));
       gson.toJson(emailBox, writer);
       writer.close();
       done = true;
@@ -94,20 +100,30 @@ public class Model {
 
   private void createEmptyEmailBox(User user) {
     if (user != null) {
-      String filePath = this.dataPath + user.getUserName() + ".json";
       List<Email> emailList = new ArrayList<>();
       EmailBox emailBox = new EmailBox(user, emailList);
+      boolean success = writeEmailBoxAsJSON(emailBox, user);
+      if (!success) {
+        this.ps.println(user.getUserName() + ": la creazione della casella mail non è andata a buon fine");
+      }
+    }
+  }
+
+  private boolean writeEmailBoxAsJSON (EmailBox emailBox, User user) {
+    boolean success = false;
+    if (user != null) {
+      String filePath = this.dataPath + user.getUserName() + ".json";
       try {
         Writer writer = new FileWriter(filePath);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        System.out.println(gson.toJsonTree(emailBox));
         gson.toJson(emailBox, writer);
+        success = true;
         writer.close();
       } catch (IOException e) {
-        this.ps.println(user.getUserName() + ": la creazione della casella mail non è andata a buon fine");
         e.printStackTrace();
       }
     }
+    return success;
   }
 
   public boolean existUser(User user) {
@@ -118,10 +134,10 @@ public class Model {
     this.connectedUser.add(user);
   }
 
+  // TODO controllare che venga scritto
   public void freeUser(User user) {
     this.connectedUser.remove(user);
     this.ps.println(user.getUserName() + " logout");
-    // TODO stampare in console che è stato effettuato il logout
   }
 
   private void initUserList(){

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
 
@@ -19,12 +20,16 @@ public class Model {
   private Connection connection;
   private User user;
   private final ObservableList<Email> emails;
+  private final ObservableList<Email> emailsSent;
+  private final ObservableList<Email> emailReceived;
   private SimpleObjectProperty<EmailProperty> currentEmailSelected = new SimpleObjectProperty<>(null);
 
 
   public Model() {
     this.connection = new Connection();
-    this.emails = FXCollections.observableList(new ArrayList<Email>());
+    this.emails = FXCollections.observableList(new ArrayList<>());
+    this.emailsSent = FXCollections.observableList(new ArrayList<>());
+    this.emailReceived = FXCollections.observableList(new ArrayList<>());
   }
 
   public void connectUser() throws SocketException {
@@ -68,7 +73,6 @@ public class Model {
     } else {
       connectUser();
       message = this.connection.sendEmail(this.user, recipientsList, subject, body);
-      System.out.println(message);
     }
     return message;
   }
@@ -78,17 +82,40 @@ public class Model {
   il metodo è disponibile, il primo thread può accedere, mentre se è occupato il thread viene messo in coda fino a quando
   non è disponibile
    */
+  // TODO ha senso usare due synchronized???
   synchronized public void retrieveEmails() {
     try {
       connectUser();
       List<Email> newEmail = this.connection.getEmails();
       // TODO da consegna dovrebbe creare un popup nel caso di nuove mail, in pratica le aggiunge semplicemente in testa
-      // TODO qua andrebbe gestita la sezione ricevute/inviate
+
+      if (this.emailsSent.isEmpty()) {
+        List<Email> send = newEmail.stream().filter(e -> e.getSender().equals(this.user)).collect(Collectors.toList());
+        this.emailsSent.addAll(send);
+      }
+
       synchronized (this.emails) {
         if (!newEmail.isEmpty()) {
+          List<Email> received = newEmail.stream().filter(e -> !e.getSender().equals(this.user)).collect(Collectors.toList());
+
           newEmail.removeAll(this.emails);
           this.emails.addAll(0, newEmail);
+
+          received.removeAll(this.emailReceived);
+          this.emailReceived.addAll(0, received);
         }
+      }
+    } catch (SocketException e) {
+      e.printStackTrace();
+    }
+  }
+
+  synchronized public void setEmailReadorNot(Email email, boolean read) {
+    try {
+      connectUser();
+      boolean result = connection.setRead(email, read);
+      if (result) {
+        // TODO set client's email as read/not read
       }
     } catch (SocketException e) {
       e.printStackTrace();
@@ -107,9 +134,18 @@ public class Model {
     return this.user;
   }
 
+  // TODO capire se serve invocare retrieveEmails o no
   public ObservableList<Email> getEmails() {
     retrieveEmails();
     return this.emails;
+  }
+
+  public ObservableList<Email> getEmailsSent() {
+    return this.emailsSent;
+  }
+
+  public ObservableList<Email> getEmailReceived() {
+    return this.emailReceived;
   }
 
   public void closeConnection() {

@@ -12,4 +12,14 @@ public class User implements Serializable {
   public String getUserName() {
     return this.userName;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    boolean areEqual = false;
+    if (obj instanceof User) {
+      User user = (User) obj;
+      areEqual = this.userName.equals(user.getUserName());
+    }
+    return areEqual;
+  }
 }

@@ -1,14 +1,11 @@
 package server;
 
-import javafx.util.Pair;
 import lib.Command;
 import lib.Email;
 import lib.EmailBox;
 import lib.User;
-
 import java.io.*;
 import java.net.Socket;
-import java.util.List;
 
 public class Connection implements Runnable{
   private PrintStream ps;
@@ -107,6 +104,12 @@ public class Connection implements Runnable{
           case "send_email":
             sendEmail(command.getEmails());
             break;
+          case "set_email_read":
+            setEmailRead(command.getEmails(), command.getUser(), true);
+            break;
+          case "set_email_unread":
+            setEmailRead(command.getEmails(), command.getUser(), false);
+            break;
           default:
             break;
         }
@@ -147,13 +150,26 @@ public class Connection implements Runnable{
 
   private void sendEmail(Email email) throws IOException{
     if (!closed) {
-      boolean operation_result;
-      operation_result = this.model.sendEmail(email);
+      boolean operation_result = this.model.sendEmail(email);
       this.outputStream.writeObject(operation_result);
       if (operation_result) {
         this.ps.println(this.user.getUserName() + " : sent successfully.");
       } else {
         this.ps.println(this.user.getUserName() + " : sending mail failed");
+      }
+    }
+  }
+
+  private void setEmailRead (Email email, User user, boolean read) throws IOException{
+    if (!closed) {
+      System.out.println(user.getUserName() + " - " + email + " " + read);
+      Boolean operation_result = this.model.setEmailRead(user, email, read);
+      this.outputStream.writeObject(operation_result);
+      // TODO impostare anche unread
+      if (operation_result) {
+        this.ps.println(this.user.getUserName() + " : set " + email.getUuid() + " as read");
+      } else {
+        this.ps.println(this.user.getUserName() + " : failure setting " + email.getUuid() + " as read");
       }
     }
   }

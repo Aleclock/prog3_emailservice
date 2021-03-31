@@ -109,7 +109,7 @@ public class Connection {
         Email email = new Email(user, recipients, subject, body);
         Command command = new Command(this.user, "send_email", email);
         this.outputStream.writeObject(command);
-        Object o=inputStream.readObject();
+        Object o = inputStream.readObject();
         if (o != null && o instanceof Boolean) {
           if ((Boolean) o) {
             message = "Invio email: Email sent correctly";
@@ -122,6 +122,23 @@ public class Connection {
       }
     }
     return message;
+  }
+
+  public boolean setRead(Email email, boolean read) {
+    boolean result = false;
+    if (this.outputStream != null) {
+      try {
+        Command command = new Command(this.user, "set_email_read", email);
+        this.outputStream.writeObject(command);
+        Object o = inputStream.readObject();
+        if (o != null && o instanceof Boolean) {
+          result = (Boolean) o;
+        }
+      } catch (IOException | ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+    }
+    return result;
   }
 
   public boolean isConnected() {

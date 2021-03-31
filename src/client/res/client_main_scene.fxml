@@ -32,15 +32,15 @@
    <left>
       <VBox prefHeight="307.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Button alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="27.0" prefWidth="106.0" style="-fx-background-color: none;" text="Ricevute" textAlignment="CENTER" />
-            <Button alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="27.0" prefWidth="111.0" style="-fx-background-color: none;" text="Inviate" />
+            <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#setEmailReceived" prefHeight="27.0" prefWidth="106.0" style="-fx-background-color: none;" text="Ricevute" textAlignment="CENTER" />
+            <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#setEmailSent" prefHeight="27.0" prefWidth="111.0" style="-fx-background-color: none;" text="Inviate" />
          </children>
       </VBox>
    </left>
    <center>
       <HBox prefHeight="341.0" prefWidth="1010.0" BorderPane.alignment="CENTER">
          <children>
-            <ListView fx:id="lv_emails" prefHeight="341.0" prefWidth="443.0" />
+            <ListView fx:id="lv_emails" prefHeight="341.0" prefWidth="502.0" />
             <Pane fx:id="pane_email_detail" prefHeight="341.0" prefWidth="590.0" />
          </children>
       </HBox>

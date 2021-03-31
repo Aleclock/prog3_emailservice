@@ -62,9 +62,7 @@ public class MainSceneController {
   }
 
   private void initListView(ListView lv_emails, Pane controller) {
-    ObservableList<Email> emailList = this.model.getEmails();
-    System.out.println(lv_emails);
-    lv_emails.setItems(emailList);
+    lv_emails.setItems(this.model.getEmailReceived());
 
     lv_emails.setCellFactory(new Callback<ListView<Email>, ListCell<Email>>() {
         @Override
@@ -92,9 +90,23 @@ public class MainSceneController {
         this.pane_email_detail.setVisible(true);
         this.listAlreadySelected = true;
       }
-      Email email = (Email) newSelection;
-      this.model.setCurrentEmail(new EmailProperty(email));
-      // TODO set email selected
+      if (newSelection != null) {
+        Email email = (Email) newSelection;
+        this.model.setCurrentEmail(new EmailProperty(email));
+        this.model.setEmailReadorNot(email, true);
+        // TODO set email selected
+      }
     });
+  }
+
+  @FXML
+  private void setEmailReceived (ActionEvent event) {
+    this.lv_emails.setItems(this.model.getEmailReceived());
+  }
+
+  @FXML
+  private void setEmailSent (ActionEvent event) {
+    this.lv_emails.setItems(this.model.getEmailsSent());
+
   }
 }
