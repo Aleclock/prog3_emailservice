@@ -66,8 +66,6 @@ public class Model {
         List<Email> errorEmail = new ArrayList<>();
         errorEmail.add(createErrorEmail(email, recipient));
         addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), errorEmail);
-        // TODO un'idea potrebbe essere quella di inviare una mail al mittente informandolo che la mail non è stata consegnata in quanto l'indirizzo non esiste
-        // TODO capire come gestire l'errore, si deve comunicare all'utente che la mail non è stata inviata a quello specifico utente (mail non esistente)
       }
     }
     return done;
@@ -91,7 +89,6 @@ public class Model {
     List<Email> emails = emailBox.getEmailList();
     int emailIndex = emails.indexOf(email);
     emails.get(emailIndex).setRead(read);
-    System.out.println( emails.get(emailIndex));
     done = writeEmailBoxAsJSON(emailBox, user);
     return done;
   }
@@ -150,7 +147,7 @@ public class Model {
     this.connectedUser.add(user);
   }
 
-  // TODO controllare che venga scritto
+  // TODO controllare che venga scritto "logout"
   public void freeUser(User user) {
     this.connectedUser.remove(user);
     this.ps.println(user.getUserName() + " logout");
@@ -162,7 +159,7 @@ public class Model {
       Scanner scanner = new Scanner(file);
       while (scanner.hasNextLine()) {
         String email = scanner.nextLine();
-        System.out.println(email);
+        //System.out.println(email);
         this.userList.add(email);
       }
       scanner.close();

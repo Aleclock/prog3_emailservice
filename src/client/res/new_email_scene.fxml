@@ -17,7 +17,7 @@
             <Label layoutX="19.0" layoutY="109.0" text="Subject:" AnchorPane.leftAnchor="16.0" />
             <TextField fx:id="tf_recipients" layoutX="73.0" layoutY="73.0" prefHeight="26.0" prefWidth="510.0" AnchorPane.leftAnchor="72.0" AnchorPane.rightAnchor="17.0" />
             <TextField fx:id="tf_subject" layoutX="73.0" layoutY="105.0" prefHeight="26.0" prefWidth="511.0" AnchorPane.leftAnchor="72.0" AnchorPane.rightAnchor="17.0" />
-            <Label fx:id="label_sender" layoutX="72.0" layoutY="47.0" prefHeight="17.0" prefWidth="437.0"/>
+            <Label fx:id="label_sender" layoutX="72.0" layoutY="47.0" prefHeight="17.0" prefWidth="437.0" />
          </children>
       </AnchorPane>
    </top>

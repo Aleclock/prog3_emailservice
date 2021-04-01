@@ -64,7 +64,6 @@ public class Connection {
   public boolean login(String email){
     if (this.outputStream != null) {
       try {
-        //this.outputStream.writeObject(new User(email));
         // TODO se faccio il login forse dopo devo settare this.user
         this.outputStream.writeObject(new Command(new User(email), "login", null));
         Object o = this.inputStream.readObject();
@@ -123,6 +122,28 @@ public class Connection {
     return message;
   }
 
+  public String deleteEmail (Email email) {
+    String message = "";
+    if (this.outputStream != null) {
+      try {
+        Command command = new Command(this.user, "delete_email", email);
+        this.outputStream.writeObject(command);
+        Object o = inputStream.readObject();
+        if (o != null && o instanceof Boolean) {
+          if ((Boolean) o) {
+            message = "Email deleted correctly";
+          } else {
+            message = "Failure while deleting email";
+          }
+        }
+      } catch (IOException | ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+    }
+    return message;
+  }
+
+  // TODO aggiungere anche per unread
   public boolean setRead(Email email, boolean read) {
     boolean result = false;
     if (this.outputStream != null) {

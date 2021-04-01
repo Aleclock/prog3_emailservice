@@ -74,9 +74,24 @@ public class Model {
       connectUser();
       Email email = new Email(this.user, recipientsList, subject, body);
       message = this.connection.sendEmail(email);
+      // TODO cambiare messaggio, non corretto che fa schifo
       if (message.contains("corretto")) {
         email.setRead(true);
         this.emailsSent.add(0, email);
+      }
+    }
+    return message;
+  }
+
+  public String requestDeleteEmail (long uuid) throws IOException{
+    String message = "";
+
+    connectUser();
+    Email email = getEmailByUUID(uuid);
+    if (email != null) {
+      message = this.connection.deleteEmail(email);
+      if (message.contains("correctly")) {
+        // TODO delete email from lists (può essere sia inviata che ricevuta, stare attento)
       }
     }
     return message;
@@ -120,7 +135,6 @@ public class Model {
       connectUser();
       boolean result = connection.setRead(email, read);
       if (result) {
-        // TODO è capitato un nullPointer, capire perchè
         getEmailByUUID (email.getUuid()).setRead(read);
       }
     } catch (SocketException e) {
@@ -131,7 +145,7 @@ public class Model {
   private Email getEmailByUUID (long id) {
     Email retrievedEmail = null;
     if (this.emails != null) {
-      List<Email> selectedEmail = emailReceived.stream().filter(e -> e.getUuid() == id).collect(Collectors.toList());
+      List<Email> selectedEmail = this.emails.stream().filter(e -> e.getUuid() == id).collect(Collectors.toList());
       if (selectedEmail != null && !selectedEmail.isEmpty()) {
         retrievedEmail = selectedEmail.get(0);
       }
@@ -174,7 +188,7 @@ public class Model {
 
   // String... stringUtenti
   // in questo modo sarebbe possibile passare una o più stringhe, non so se possa servire
-  private List<User> stringToUserList(String string) {
+  public List<User> stringToUserList(String string) {
     List<User> userList = new ArrayList<>();
     String[] userNames = string.split("\\s+");
     for (String email: userNames) {

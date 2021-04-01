@@ -14,7 +14,6 @@ public class Connection implements Runnable{
   private User user;
   private ObjectInputStream inputStream;
   private ObjectOutputStream outputStream;
-  private EmailBox emails;
   private boolean closed = false;
 
   public Connection(Model model, Socket socket, PrintStream ps) {
@@ -87,7 +86,7 @@ public class Connection implements Runnable{
   }
 
   private void handleCall(Command command) throws IOException, ClassNotFoundException {
-    System.out.println(command.getUser().getUserName() + " - " + command.getCommandKey());
+    //System.out.println(command.getUser().getUserName() + " - " + command.getCommandKey());
     if (!closed) {
       Object o;
       try {
@@ -162,14 +161,19 @@ public class Connection implements Runnable{
 
   private void setEmailRead (Email email, User user, boolean read) throws IOException{
     if (!closed) {
-      System.out.println(user.getUserName() + " - " + email + " " + read);
       Boolean operation_result = this.model.setEmailRead(user, email, read);
       this.outputStream.writeObject(operation_result);
-      // TODO impostare anche unread
-      if (operation_result) {
-        this.ps.println(this.user.getUserName() + " : set " + email.getUuid() + " as read");
+      String message;
+      if (read) {
+        message = email.getUuid() + " as read";
       } else {
-        this.ps.println(this.user.getUserName() + " : failure setting " + email.getUuid() + " as read");
+        message = email.getUuid() + " as unread";
+      }
+
+      if (operation_result) {
+        this.ps.println(this.user.getUserName() + " : set " + message);
+      } else {
+        this.ps.println(this.user.getUserName() + " : failure setting " + message);
       }
     }
   }

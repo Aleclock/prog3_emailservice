@@ -6,6 +6,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import lib.Email;
+import lib.EmailProperty;
 
 import java.io.IOException;
 
@@ -31,27 +33,44 @@ public class EmailDetailController {
   @FXML
   public void handleReplyAll(ActionEvent event) {
     NewEmailController controller = loadNewMailScene();
-    // TODO gestire, inviare a tutti tranne a te (recipients + sender)
+    if (controller != null) {
+      String recipients = this.label_sender.textProperty().get() + label_recipipients.textProperty().get();
+      recipients = recipients.replace(this.model.getUser().getUserName(), "");
+      recipients = recipients.replace(" ,", "");
+      controller.setRecipients(recipients);
+      controller.setSubject("RE: " + this.label_subject.textProperty().get());
+    }
   }
 
   @FXML
   public void handleDeleteEmail (ActionEvent event) {
     NewEmailController controller = loadNewMailScene();
-    // TODO gestire
+    try {
+      EmailProperty emailProperty = this.model.getCurrentEmailSelected().get();
+      String message = this.model.requestDeleteEmail(emailProperty.getUuid());
+      // TODO if message contains "correctly" show banner, remove all texts
+      // TODO else show banner
+    } catch (IOException e) {
+      // TODO handle error
+    }
   }
 
   @FXML
   public void handleReply (ActionEvent event) {
     NewEmailController controller = loadNewMailScene();
-    controller.setRecipients(this.label_sender.textProperty().get());
-    controller.setSubject ("RE: " + this.label_subject.textProperty().get());
+    if (controller != null) {
+      controller.setRecipients(this.label_sender.textProperty().get());
+      controller.setSubject("RE: " + this.label_subject.textProperty().get());
+    }
   }
 
   @FXML
   public void handleForward (ActionEvent event) {
     NewEmailController controller = loadNewMailScene();
-    controller.setSubject (this.label_subject.textProperty().get());
-    controller.setBody(this.label_body.textProperty().get());
+    if (controller != null) {
+      controller.setSubject(this.label_subject.textProperty().get());
+      controller.setBody(this.label_body.textProperty().get());
+    }
   }
 
   private NewEmailController loadNewMailScene() {

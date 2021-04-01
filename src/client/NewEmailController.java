@@ -2,14 +2,13 @@ package client;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import lib.ColorManager;
+import lib.User;
 
 import java.io.IOException;
+import java.util.List;
 
-// TODO impostare sender
 public class NewEmailController {
   @FXML
   TextField tf_recipients, tf_subject;
@@ -42,7 +41,6 @@ public class NewEmailController {
     this.ta_body.setText(body);
   }
 
-  // TODO controllare che le email dei destinatari siano formalmente corretti
   @FXML
   public void handleSendEmail(ActionEvent event) {
     String body = this.ta_body.getText();
@@ -53,9 +51,30 @@ public class NewEmailController {
     }
 
     try {
-      String message = this.model.requestSendMail(recipients, subject, body);
-      this.label_email_status.setText(message);
-      // TODO cambiare colore dello sfondo in base al messaggio
+      List<User> recipientsUser = this.model.stringToUserList(recipients);
+      boolean correct = true;
+      for (User u : recipientsUser) {
+        if (!this.model.matchesEmailFormat(u.getUserName())) {
+          correct = false;
+        }
+      }
+
+      if (correct) {
+        String message = this.model.requestSendMail(recipients, subject, body);
+        String cssValue;
+        if (message.contains("correct")) {
+          // TODO valutare se chiudere la finestra nel caso in cui l'email sia stata inviata correttamente
+          cssValue = "-fx-background-color: " + new ColorManager().getSuccessColor();
+        } else {
+          cssValue = "-fx-background-color: " + new ColorManager().getErrorColor();
+        }
+        this.label_email_status.setStyle(cssValue);
+        this.label_email_status.setText(message);
+      } else {
+        String cssValue = "-fx-background-color: " + new ColorManager().getErrorColor();
+        this.label_email_status.setStyle(cssValue);
+        this.label_email_status.setText("Recipient's email not valid");
+      }
     } catch(IOException e) {
       // TODO gestire errori e messaggi
     }

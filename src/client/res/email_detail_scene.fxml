@@ -19,7 +19,7 @@
       </AnchorPane>
       <AnchorPane prefHeight="91.0" prefWidth="600.0">
          <children>
-            <Label fx:id="label_recipipients" layoutX="51.0" layoutY="14.0" prefHeight="17.0" prefWidth="324.0" text="Label" AnchorPane.leftAnchor="60.0">
+            <Label fx:id="label_sender" layoutX="51.0" layoutY="14.0" prefHeight="17.0" prefWidth="324.0" text="Label" AnchorPane.leftAnchor="60.0">
                <font>
                   <Font name="System Font" size="11.0" />
                </font></Label>
@@ -27,7 +27,7 @@
                <font>
                   <Font name="System Bold" size="14.0" />
                </font></Label>
-            <Label fx:id="label_sender" layoutX="52.0" layoutY="47.0" prefHeight="17.0" prefWidth="323.0" text="Label" AnchorPane.leftAnchor="60.0">
+            <Label fx:id="label_recipipients" layoutX="52.0" layoutY="47.0" prefHeight="17.0" prefWidth="323.0" text="Label" AnchorPane.leftAnchor="60.0">
                <font>
                   <Font name="System Font" size="11.0" />
                </font></Label>
@@ -36,12 +36,12 @@
                   <Font name="System Font" size="11.0" />
                </font></Label>
             <Separator layoutX="200.0" layoutY="80.0" prefWidth="200.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" />
-            <Label fx:id="label_recipipients1" layoutX="10.0" layoutY="14.0" prefHeight="17.0" prefWidth="46.0" text="From:" textFill="#707070" AnchorPane.leftAnchor="10.0">
+            <Label layoutX="10.0" layoutY="14.0" prefHeight="17.0" prefWidth="46.0" text="From:" textFill="#707070" AnchorPane.leftAnchor="10.0">
                <font>
                   <Font name="System Font" size="11.0" />
                </font>
             </Label>
-            <Label fx:id="label_recipipients11" layoutX="11.0" layoutY="47.0" prefHeight="17.0" prefWidth="46.0" text="To:" textFill="#707070" AnchorPane.leftAnchor="10.0">
+            <Label layoutX="11.0" layoutY="47.0" prefHeight="17.0" prefWidth="46.0" text="To:" textFill="#707070" AnchorPane.leftAnchor="10.0">
                <font>
                   <Font name="System Font" size="11.0" />
                </font>

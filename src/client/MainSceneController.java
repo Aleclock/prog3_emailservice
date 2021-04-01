@@ -1,6 +1,5 @@
 package client;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -56,6 +55,7 @@ public class MainSceneController {
 
       NewEmailController newEmailController = loader.getController();
       newEmailController.initModel(model);
+      newEmailController.setSender(this.model.getUser().getUserName());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -71,7 +71,6 @@ public class MainSceneController {
         }
     });
 
-    // TODO al momento quando viene inizializzata la lista viene aggiunta la schermata della mail e settata come non visibile
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("res/email_detail_scene.fxml"));
       Parent root = loader.load();
@@ -93,8 +92,9 @@ public class MainSceneController {
       if (newSelection != null) {
         Email email = (Email) newSelection;
         this.model.setCurrentEmail(new EmailProperty(email));
-        this.model.setEmailReadorNot(email, true);
-        // TODO set email selected
+        if (!email.hasBeenRead()) {
+          this.model.setEmailReadorNot(email, true);
+        }
       }
     });
   }

@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import lib.User;
 import java.io.IOException;
@@ -53,7 +52,7 @@ public class LoginController {
         controller.initModel(this.model);
         controller.initalize();
 
-        // TODO ridimensionare finestra
+        System.out.println("User :" + this.model.getUser().getUserName());
       } catch(IOException ex) {
         ex.printStackTrace();
       }

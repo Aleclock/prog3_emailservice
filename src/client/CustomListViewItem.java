@@ -8,7 +8,7 @@ import javafx.scene.shape.Circle;
 import lib.Email;
 
 public class CustomListViewItem extends ListCell<Email> {
-  private static String filePath = "res/email_list_item.fxml";
+  private static final String filePath = "res/email_list_item.fxml";
   private AnchorPane item;
   private Label subject;
   private Label recipients;
@@ -16,7 +16,7 @@ public class CustomListViewItem extends ListCell<Email> {
   private Label date;
   private Circle status;
 
-  // TODO modificare visualizzazione della data e forse dei destinatari
+  // TODO al momento in entrambe le schermate (ricevute/inviate) viene visualizato il sender (in inviate sarebbe meglio visualizzare il recipients)
 
   public CustomListViewItem() {
     super();
@@ -41,14 +41,8 @@ public class CustomListViewItem extends ListCell<Email> {
       this.subject.setText(email.getSubject());
       this.recipients.setText(email.recipientsAsString());
       this.date.setText(email.getFormattedDate());
-
-
       this.body_preview.setText(email.getBody());
-      if (email.hasBeenRead()) {
-        this.status.setVisible(false);
-      } else {
-        this.status.setVisible(true);
-      }
+      this.status.setVisible(!email.hasBeenRead());
       setGraphic(item);
     } else {
       setGraphic(null);
