@@ -59,12 +59,12 @@ public class Model {
         }
       }
     });
-    //emailRefresh.setDaemon(true); // TODO capire a cosa serve
+    //emailRefresh.setDaemon(true); // TODO capire a cosa serve setDeamon
     emailRefresh.start();
   }
 
   public String requestSendMail(String recipients, String subject, String body) throws IOException {
-    String message = ""; // TODO capire se ha senso
+    String message = "";
     List<User> recipientsList = stringToUserList(recipients);
 
     if (recipientsList.isEmpty()) {
@@ -72,7 +72,12 @@ public class Model {
       // TODO valutare se segnalare anche che non c'è l'oggetto o il testo del messaggio
     } else {
       connectUser();
-      message = this.connection.sendEmail(this.user, recipientsList, subject, body);
+      Email email = new Email(this.user, recipientsList, subject, body);
+      message = this.connection.sendEmail(email);
+      if (message.contains("corretto")) {
+        email.setRead(true);
+        this.emailsSent.add(0, email);
+      }
     }
     return message;
   }
@@ -115,11 +120,23 @@ public class Model {
       connectUser();
       boolean result = connection.setRead(email, read);
       if (result) {
-        // TODO set client's email as read/not read
+        // TODO è capitato un nullPointer, capire perchè
+        getEmailByUUID (email.getUuid()).setRead(read);
       }
     } catch (SocketException e) {
       e.printStackTrace();
     }
+  }
+
+  private Email getEmailByUUID (long id) {
+    Email retrievedEmail = null;
+    if (this.emails != null) {
+      List<Email> selectedEmail = emailReceived.stream().filter(e -> e.getUuid() == id).collect(Collectors.toList());
+      if (selectedEmail != null && !selectedEmail.isEmpty()) {
+        retrievedEmail = selectedEmail.get(0);
+      }
+    }
+    return retrievedEmail;
   }
 
   public Connection getConnection() {

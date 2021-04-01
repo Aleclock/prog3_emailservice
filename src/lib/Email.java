@@ -1,6 +1,8 @@
 package lib;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -84,6 +86,24 @@ public class Email implements Serializable {
 
   public String recipientsAsString() {
     return this.recipients.stream().map(User::getUserName).collect(Collectors.joining(" , "));
+  }
+
+  public String getFormattedDate () {
+    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    return formatter.format(this.dateSent);
+  }
+
+  @Override
+  public String toString() {
+    return "Email{" +
+            "ID : " + this.uuid +
+            ", data : " + this.dateSent +
+            ", mittente : " + this.sender +
+            ", destinatario : " + this.recipients +
+            ", argomento : '" + this.subject + '\'' +
+            ", testo : '" + this.body + '\'' +
+            ", letta : " + this.read +
+            '}';
   }
 
   @Override

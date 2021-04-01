@@ -1,7 +1,6 @@
 package client;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.AnchorPane;
@@ -41,10 +40,14 @@ public class CustomListViewItem extends ListCell<Email> {
     if (email != null && !empty) {
       this.subject.setText(email.getSubject());
       this.recipients.setText(email.recipientsAsString());
-      this.date.setText(email.getDateSent().toString());
+      this.date.setText(email.getFormattedDate());
+
+
       this.body_preview.setText(email.getBody());
       if (email.hasBeenRead()) {
         this.status.setVisible(false);
+      } else {
+        this.status.setVisible(true);
       }
       setGraphic(item);
     } else {

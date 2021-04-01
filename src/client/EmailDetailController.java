@@ -65,7 +65,8 @@ public class EmailDetailController {
       stage.show();
 
       NewEmailController controller = loader.getController();
-      controller.initModel(model);
+      controller.initModel(this.model);
+      controller.setSender(this.model.getUser().getUserName());
       return controller;
     } catch (IOException e) {
       System.out.println("ERRORE nel caricamento di new_email_scene.fxml");

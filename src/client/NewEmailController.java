@@ -3,6 +3,7 @@ package client;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -16,6 +17,8 @@ public class NewEmailController {
   TextArea ta_body;
   @FXML
   Button send_email;
+  @FXML
+  Label label_email_status, label_sender;
 
   private Model model;
 
@@ -23,32 +26,36 @@ public class NewEmailController {
     this.model = model;
   }
 
+  public void setSender (String sender) {
+    this.label_sender.setText(sender);
+  }
+
   public void setRecipients(String recipients) {
-    tf_recipients.setText(recipients);
+    this.tf_recipients.setText(recipients);
   }
 
   public void setSubject(String subject) {
-    tf_subject.setText(subject);
+    this.tf_subject.setText(subject);
   }
 
   public void setBody(String body) {
-    ta_body.setText(body);
+    this.ta_body.setText(body);
   }
 
   // TODO controllare che le email dei destinatari siano formalmente corretti
   @FXML
   public void handleSendEmail(ActionEvent event) {
-    String body = ta_body.getText();
-    String recipients = tf_recipients.getText();
-    String subject = tf_subject.getText();
+    String body = this.ta_body.getText();
+    String recipients = this.tf_recipients.getText();
+    String subject = this.tf_subject.getText();
     if (subject.equals("")) {
       subject = "(no subject)";
     }
 
     try {
       String message = this.model.requestSendMail(recipients, subject, body);
-      // TODO stampare messaggio da qualche parte
-      // TODO valutare se aggiungere direttamente la mail alla lista se tutto è andato bene
+      this.label_email_status.setText(message);
+      // TODO cambiare colore dello sfondo in base al messaggio
     } catch(IOException e) {
       // TODO gestire errori e messaggi
     }

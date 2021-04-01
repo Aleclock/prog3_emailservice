@@ -51,6 +51,7 @@ public class Model {
   }
 
   // TODO per il momento il server aggiunge la mail nella mail box del mittente anche se i destinatari non esistono (CAPIRE COME FARE)
+  // TODO le mail salvate nella emailBox del mittente devono essere settate come lette
   public boolean sendEmail(Email email) {
     boolean done = false;
     List<Email> emails = new ArrayList<>();
@@ -58,10 +59,13 @@ public class Model {
     addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), emails);
     for (User recipient : email.getRecipients()) {
       if (existUser(recipient)) {
-        EmailBox emailbox = getOrCreateEmailBox(recipient);
-        done = addEmailToEmailBox(recipient, emailBox, emails);
+        EmailBox emailboxRecipient = getOrCreateEmailBox(recipient);
+        done = addEmailToEmailBox(recipient, emailboxRecipient, emails);
       } else {
         this.ps.println(recipient.getUserName() + " not exist: Sending mail failed");
+        List<Email> errorEmail = new ArrayList<>();
+        errorEmail.add(createErrorEmail(email, recipient));
+        addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), errorEmail);
         // TODO un'idea potrebbe essere quella di inviare una mail al mittente informandolo che la mail non è stata consegnata in quanto l'indirizzo non esiste
         // TODO capire come gestire l'errore, si deve comunicare all'utente che la mail non è stata inviata a quello specifico utente (mail non esistente)
       }
@@ -69,8 +73,20 @@ public class Model {
     return done;
   }
 
+  private Email createErrorEmail(Email email, User userNonExistent) {
+    User systemUser = new User ("Mail Delivery System");
+    String bodyMessage = "This is a system-generated message to inform you that your email could not be delivered to following" +
+            "recipients. Details of the email and the error are as follows:\n" +
+            userNonExistent.getUserName() + " not exist.\n\n" +
+            "EMAIL INFO:\n" +
+            "Subject: " + email.getSubject() + "\n" +
+            "Date sent: " + email.getDateSent() + "\n" +
+            "Body: " + email.getBody();
+    return new Email(systemUser, email.getSender(), "Undelivered Mail Returned to Sender", bodyMessage);
+  }
+
   public boolean setEmailRead (User user, Email email, boolean read) {
-    boolean done = false;
+    boolean done;
     EmailBox emailBox = getEmailBox(user);
     List<Email> emails = emailBox.getEmailList();
     int emailIndex = emails.indexOf(email);

@@ -42,8 +42,13 @@ public class LoginController {
         BorderPane root = loader.load();
         MainSceneController controller = loader.getController();
         tf_email.getScene().setRoot(loader.getRoot());
+
         Stage stage = (Stage) root.getScene().getWindow();
         stage.setTitle(this.model.getUser().getUserName());
+        stage.setWidth(1200);
+        stage.setHeight(450);
+        //stage.setMinWidth();
+        //stage.setMinHeight(root.getScene().getHeight());
 
         controller.initModel(this.model);
         controller.initalize();

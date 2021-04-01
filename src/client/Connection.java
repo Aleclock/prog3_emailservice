@@ -102,11 +102,10 @@ public class Connection {
     return emails;
   }
 
-  public String sendEmail(User user, List<User> recipients, String subject, String body) {
+  public String sendEmail(Email email) {
     String message = "";
     if (this.outputStream != null) {
       try {
-        Email email = new Email(user, recipients, subject, body);
         Command command = new Command(this.user, "send_email", email);
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
