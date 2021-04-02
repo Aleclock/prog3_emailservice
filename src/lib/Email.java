@@ -117,4 +117,9 @@ public class Email implements Serializable {
     }
     return areEqual;
   }
+
+  @Override
+  public int hashCode() {
+    return (int) this.uuid;
+  }
 }

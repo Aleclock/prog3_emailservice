@@ -14,7 +14,6 @@ public class Model {
   private PrintStream ps;
   private List<String> userList = new ArrayList<>();
   private List<User> connectedUser = new ArrayList<>();
-  private EmailBox emailBox;
   private String dataPath = "src/server/data/";
 
   Model(PrintStream ps){
@@ -22,14 +21,13 @@ public class Model {
     initUserList();
   }
 
-  // TODO ha senso tenere this.emailBox o no?
   public EmailBox getOrCreateEmailBox(User user) {
-    this.emailBox = getEmailBox(user);
-    if (this.emailBox == null) {
+    EmailBox emailBox = getEmailBox(user);
+    if (emailBox == null) {
       createEmptyEmailBox(user);
-      this.emailBox = getEmailBox(user);
+      emailBox = getEmailBox(user);
     }
-    return this.emailBox;
+    return emailBox;
   }
 
   public EmailBox getEmailBox(User user) {
@@ -50,13 +48,11 @@ public class Model {
     return emailBox;
   }
 
-  // TODO per il momento il server aggiunge la mail nella mail box del mittente anche se i destinatari non esistono (CAPIRE COME FARE)
-  // TODO le mail salvate nella emailBox del mittente devono essere settate come lette
   public boolean sendEmail(Email email) {
     boolean done = false;
     List<Email> emails = new ArrayList<>();
     emails.add(email);
-    addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), emails);
+
     for (User recipient : email.getRecipients()) {
       if (existUser(recipient)) {
         EmailBox emailboxRecipient = getOrCreateEmailBox(recipient);
@@ -68,6 +64,20 @@ public class Model {
         addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), errorEmail);
       }
     }
+    if (done && !email.recipientsAsString().contains(email.getSender().getUserName())) {
+      int emailIndex = emails.indexOf(email);
+      emails.get(emailIndex).setRead(true);
+      done = addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), emails);
+    }
+    return done;
+  }
+
+  public boolean deleteEmail (User user, Email email) {
+    boolean done;
+    EmailBox emailBox = getEmailBox(user);
+    List<Email> emails = emailBox.getEmailList();
+    emails.remove(email);
+    done = writeEmailBoxAsJSON(emailBox, user);
     return done;
   }
 
@@ -147,7 +157,7 @@ public class Model {
     this.connectedUser.add(user);
   }
 
-  // TODO controllare che venga scritto "logout"
+  // TODO controllare che venga scritto "logout" in console server
   public void freeUser(User user) {
     this.connectedUser.remove(user);
     this.ps.println(user.getUserName() + " logout");
@@ -159,7 +169,6 @@ public class Model {
       Scanner scanner = new Scanner(file);
       while (scanner.hasNextLine()) {
         String email = scanner.nextLine();
-        //System.out.println(email);
         this.userList.add(email);
       }
       scanner.close();

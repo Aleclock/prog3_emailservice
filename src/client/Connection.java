@@ -110,9 +110,9 @@ public class Connection {
         Object o = inputStream.readObject();
         if (o != null && o instanceof Boolean) {
           if ((Boolean) o) {
-            message = "Invio email: Email sent correctly";
+            message = "Email successfully sent";
           } else {
-            message = "Failure";
+            message = "Error: email not sent";
           }
         }
       } catch (IOException | ClassNotFoundException e) {
@@ -131,9 +131,9 @@ public class Connection {
         Object o = inputStream.readObject();
         if (o != null && o instanceof Boolean) {
           if ((Boolean) o) {
-            message = "Email deleted correctly";
+            message = "Email successfully deleted";
           } else {
-            message = "Failure while deleting email";
+            message = "Error: email not deleted";
           }
         }
       } catch (IOException | ClassNotFoundException e) {

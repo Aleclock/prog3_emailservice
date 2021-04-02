@@ -62,7 +62,7 @@ public class NewEmailController {
       if (correct) {
         String message = this.model.requestSendMail(recipients, subject, body);
         String cssValue;
-        if (message.contains("correct")) {
+        if (message.contains("successfully")) {
           // TODO valutare se chiudere la finestra nel caso in cui l'email sia stata inviata correttamente
           cssValue = "-fx-background-color: " + new ColorManager().getSuccessColor();
         } else {
@@ -74,6 +74,9 @@ public class NewEmailController {
         String cssValue = "-fx-background-color: " + new ColorManager().getErrorColor();
         this.label_email_status.setStyle(cssValue);
         this.label_email_status.setText("Recipient's email not valid");
+
+        // TODO andare in sleep per tot secondi
+        // TODO rimuovere
       }
     } catch(IOException e) {
       // TODO gestire errori e messaggi

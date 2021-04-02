@@ -74,9 +74,9 @@ public class Model {
       connectUser();
       Email email = new Email(this.user, recipientsList, subject, body);
       message = this.connection.sendEmail(email);
-      // TODO cambiare messaggio, non corretto che fa schifo
-      if (message.contains("corretto")) {
+      if (message.contains("successfully")) {
         email.setRead(true);
+        this.emails.add(0, email);
         this.emailsSent.add(0, email);
       }
     }
@@ -90,11 +90,25 @@ public class Model {
     Email email = getEmailByUUID(uuid);
     if (email != null) {
       message = this.connection.deleteEmail(email);
-      if (message.contains("correctly")) {
-        // TODO delete email from lists (può essere sia inviata che ricevuta, stare attento)
+      if (message.contains("successfully")) {
+        List<Email> emailToRemove = new ArrayList<>();
+        emailToRemove.add(email);
+        removeClientEmail (emailToRemove, this.emails);
+
+        if (email.getSender().getUserName().equals(this.user.getUserName())) {
+          removeClientEmail(emailToRemove, this.emailsSent);
+        }
+        if (email.recipientsAsString().contains(this.user.getUserName())) {
+          removeClientEmail(emailToRemove, this.emailReceived);
+        }
       }
     }
     return message;
+  }
+
+  // TODO dovrei prevenire errori
+  private void removeClientEmail (List<Email> email, ObservableList<Email> emailList) {
+    emailList.removeAll(email);
   }
 
   /*
@@ -116,13 +130,10 @@ public class Model {
 
       synchronized (this.emails) {
         if (!newEmail.isEmpty()) {
-          List<Email> received = newEmail.stream().filter(e -> !e.getSender().equals(this.user)).collect(Collectors.toList());
+          List<Email> received = newEmail.stream().filter (e -> e.recipientsAsString().contains(this.user.getUserName())).distinct().collect(Collectors.toList());
 
-          newEmail.removeAll(this.emails);
-          this.emails.addAll(0, newEmail);
-
-          received.removeAll(this.emailReceived);
-          this.emailReceived.addAll(0, received);
+          updateLists(received, this.emailReceived);
+          updateLists(newEmail, this.emails);
         }
       }
     } catch (SocketException e) {
@@ -130,12 +141,24 @@ public class Model {
     }
   }
 
+  private void updateLists (List<Email> newEmails, ObservableList<Email> emailList) {
+    newEmails.removeAll(emailList);
+    emailList.addAll(0, newEmails);
+  }
+
   synchronized public void setEmailReadorNot(Email email, boolean read) {
     try {
       connectUser();
       boolean result = connection.setRead(email, read);
       if (result) {
-        getEmailByUUID (email.getUuid()).setRead(read);
+        getEmailByUuid(this.emails, email.getUuid()).setRead(read);
+
+        if (email.getSender().getUserName().equals(this.user.getUserName())) {
+          getEmailByUuid(this.emailsSent, email.getUuid()).setRead(read);
+        }
+        if (email.recipientsAsString().contains(this.user.getUserName())) {
+          getEmailByUuid(this.emailReceived, email.getUuid()).setRead(read);
+        }
       }
     } catch (SocketException e) {
       e.printStackTrace();
@@ -153,6 +176,14 @@ public class Model {
     return retrievedEmail;
   }
 
+  private Email getEmailByUuid (ObservableList<Email> emailList, long id) {
+    Email retrievedEmail = null;
+    if (emailList != null) {
+      retrievedEmail = emailList.stream().filter( e -> e.getUuid() == id).collect(Collectors.toList()).get(0);
+    }
+    return retrievedEmail;
+  }
+
   public Connection getConnection() {
     return connection;
   }
@@ -165,9 +196,7 @@ public class Model {
     return this.user;
   }
 
-  // TODO capire se serve invocare retrieveEmails o no
   public ObservableList<Email> getEmails() {
-    retrieveEmails();
     return this.emails;
   }
 

@@ -5,8 +5,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import lib.Email;
+import lib.ColorManager;
 import lib.EmailProperty;
 
 import java.io.IOException;
@@ -15,6 +16,9 @@ public class EmailDetailController {
   private Model model;
   @FXML
   private Label label_recipipients, label_subject, label_sender, label_date, label_body;
+  @FXML
+  private VBox vbox_email_detail_root;
+  private Label label_log;
 
   public void initModel(Model model) {
     this.model = model;
@@ -24,6 +28,7 @@ public class EmailDetailController {
         this.label_recipipients.textProperty().bindBidirectional(newEmail.getRecipientsProperty());
         this.label_subject.textProperty().bindBidirectional(newEmail.getSubjectProperty());
         this.label_sender.textProperty().bindBidirectional(newEmail.getSenderProperty());
+        // TODO inserire una data formattata decentemente
         this.label_date.textProperty().bindBidirectional(newEmail.getDateProperty());
         this.label_body.textProperty().bindBidirectional(newEmail.getBodyProperty());
       }
@@ -44,12 +49,20 @@ public class EmailDetailController {
 
   @FXML
   public void handleDeleteEmail (ActionEvent event) {
-    NewEmailController controller = loadNewMailScene();
     try {
       EmailProperty emailProperty = this.model.getCurrentEmailSelected().get();
       String message = this.model.requestDeleteEmail(emailProperty.getUuid());
+
+      String cssValue;
+      if (message.contains("successfully")) {
+        cssValue = "-fx-background-color: " + new ColorManager().getSuccessColor();
+        clearAll();
+      } else {
+        cssValue = "-fx-background-color: " + new ColorManager().getErrorColor();
+      }
+      this.label_log.setStyle(cssValue);
+      this.label_log.setText(message);
       // TODO if message contains "correctly" show banner, remove all texts
-      // TODO else show banner
     } catch (IOException e) {
       // TODO handle error
     }
@@ -73,6 +86,15 @@ public class EmailDetailController {
     }
   }
 
+  // TODO al momento è brutto, un'idea potrebbe essere quella di selezionare la mail successiva quando la mail corrente viene eliminata
+  private void clearAll() {
+    this.label_recipipients.setText("");
+    this.label_body.setText("");
+    this.label_sender.setText("");
+    this.label_subject.setText("");
+    this.label_date.setText("");
+  }
+
   private NewEmailController loadNewMailScene() {
     try {
       FXMLLoader loader = new FXMLLoader();
@@ -92,5 +114,9 @@ public class EmailDetailController {
       e.printStackTrace();
     }
     return null;
+  }
+
+  public void setLabelLog(Label label) {
+    this.label_log = label;
   }
 }

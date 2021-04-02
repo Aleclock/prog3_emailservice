@@ -23,6 +23,8 @@ public class MainSceneController {
   private ListView lv_emails;
   @FXML
   private Pane pane_email_detail;
+  @FXML
+  private Label label_log;
 
   public void initalize() {
     initListView(lv_emails, pane_email_detail);
@@ -77,6 +79,7 @@ public class MainSceneController {
       Scene scene = new Scene(root);
       EmailDetailController emailDetailController = loader.getController();
       emailDetailController.initModel(this.model);
+      emailDetailController.setLabelLog(this.label_log);
 
       this.pane_email_detail.getChildren().addAll(scene.getRoot());
       this.pane_email_detail.setVisible(false);

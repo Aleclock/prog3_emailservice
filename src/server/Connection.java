@@ -109,6 +109,9 @@ public class Connection implements Runnable{
           case "set_email_unread":
             setEmailRead(command.getEmails(), command.getUser(), false);
             break;
+          case "delete_email":
+            deleteEmail(command.getEmails(), command.getUser());
+            break;
           default:
             break;
         }
@@ -174,6 +177,18 @@ public class Connection implements Runnable{
         this.ps.println(this.user.getUserName() + " : set " + message);
       } else {
         this.ps.println(this.user.getUserName() + " : failure setting " + message);
+      }
+    }
+  }
+
+  private void deleteEmail (Email email, User user) throws IOException{
+    if (!closed) {
+      Boolean operation_result = this.model.deleteEmail(user, email);
+      this.outputStream.writeObject(operation_result);
+      if (operation_result) {
+        this.ps.println(this.user.getUserName() + " : email " + email.getUuid() + " successfully deleted");
+      } else {
+        this.ps.println(this.user.getUserName() + " : ERROR while deleting email " + email.getUuid());
       }
     }
   }
