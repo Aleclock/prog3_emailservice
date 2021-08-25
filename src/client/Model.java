@@ -43,7 +43,7 @@ public class Model {
    * Create a thread that call retrieveEmails method every 5000 seconds, in order to update client emails list
    */
   public void refreshEmailList() {
-    Thread emailRefresh = new Thread(new Runnable() {
+    Thread emailRefreshThread = new Thread(new Runnable() {
       @Override
       public void run() {
         // TODO capire se farlo dipendere dallo stato della connessione
@@ -59,8 +59,8 @@ public class Model {
         }
       }
     });
-    //emailRefresh.setDaemon(true); // TODO capire a cosa serve setDeamon
-    emailRefresh.start();
+    //emailRefreshThread.setDaemon(true); // TODO capire a cosa serve setDeamon
+    emailRefreshThread.start();
   }
 
   public String requestSendMail(String recipients, String subject, String body) throws IOException {
@@ -169,7 +169,8 @@ public class Model {
     Email retrievedEmail = null;
     if (this.emails != null) {
       List<Email> selectedEmail = this.emails.stream().filter(e -> e.getUuid() == id).collect(Collectors.toList());
-      if (selectedEmail != null && !selectedEmail.isEmpty()) {
+      if (!selectedEmail.isEmpty()) {
+        // TODO potrebbero esserci più mail con lo stesso id?
         retrievedEmail = selectedEmail.get(0);
       }
     }
@@ -179,7 +180,10 @@ public class Model {
   private Email getEmailByUuid (ObservableList<Email> emailList, long id) {
     Email retrievedEmail = null;
     if (emailList != null) {
-      retrievedEmail = emailList.stream().filter( e -> e.getUuid() == id).collect(Collectors.toList()).get(0);
+      List<Email> selectedEmail = emailList.stream().filter(e -> e.getUuid() == id).collect(Collectors.toList());
+      if (!selectedEmail.isEmpty()) {
+        retrievedEmail = selectedEmail.get(0);
+      }
     }
     return retrievedEmail;
   }

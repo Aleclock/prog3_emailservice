@@ -5,6 +5,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
+
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -16,6 +17,7 @@ public class Controller {
   @FXML
   private ToggleButton toggle_server_status;
 
+  // TODO capire se questo metodo viene invocato in automatico o no
   public void initialize() {
     this.ps = new PrintStream(new Console(console), true);
     //System.setOut(ps);
@@ -47,6 +49,8 @@ public class Controller {
   public void setServer(Server server) {
     this.server = server;
   }
+
+  /** This class allow to log and write messages on console TextArea **/
 
   public static class Console extends OutputStream {
     private TextArea console;

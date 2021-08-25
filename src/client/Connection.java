@@ -67,7 +67,7 @@ public class Connection {
         // TODO se faccio il login forse dopo devo settare this.user
         this.outputStream.writeObject(new Command(new User(email), "login", null));
         Object o = this.inputStream.readObject();
-        if (o != null && o instanceof Boolean) {
+        if (o instanceof Boolean) {
           return (boolean) o;
         }
       } catch (IOException | ClassNotFoundException e) {
@@ -88,8 +88,7 @@ public class Connection {
          */
         this.outputStream.writeObject(new Command(this.user, "read_emails", null));
         Object o = this.inputStream.readObject();
-        if (o != null && o instanceof EmailBox) {
-          EmailBox emailBox = (EmailBox) o;
+        if (o instanceof EmailBox emailBox) {
           emails = emailBox.getEmailList();
         } else {
           // TODO lettura email box fallita
@@ -108,7 +107,7 @@ public class Connection {
         Command command = new Command(this.user, "send_email", email);
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
-        if (o != null && o instanceof Boolean) {
+        if (o instanceof Boolean) {
           if ((Boolean) o) {
             message = "Email successfully sent";
           } else {
@@ -129,7 +128,7 @@ public class Connection {
         Command command = new Command(this.user, "delete_email", email);
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
-        if (o != null && o instanceof Boolean) {
+        if (o instanceof Boolean) {
           if ((Boolean) o) {
             message = "Email successfully deleted";
           } else {
@@ -148,10 +147,17 @@ public class Connection {
     boolean result = false;
     if (this.outputStream != null) {
       try {
+        String code = "";
+        if (read) {
+          code = "set_email_read";
+        } else {
+          code = "set_email_unread";
+        }
+        // TODO qua usare code e aggiungere la funzione nel server
         Command command = new Command(this.user, "set_email_read", email);
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
-        if (o != null && o instanceof Boolean) {
+        if (o instanceof Boolean) {
           result = (Boolean) o;
         }
       } catch (IOException | ClassNotFoundException e) {

@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Model {
-  private PrintStream ps;
-  private List<String> userList = new ArrayList<>();
+  final private String dataPath = "src/server/data/";
+  private PrintStream ps; // TODO forse non è il model che si deve occupare della scrittura sull'interfaccia
+  final private List<String> userList = new ArrayList<>();
   private List<User> connectedUser = new ArrayList<>();
-  private String dataPath = "src/server/data/";
 
   Model(PrintStream ps){
     this.ps = ps;
@@ -73,11 +73,13 @@ public class Model {
   }
 
   public boolean deleteEmail (User user, Email email) {
-    boolean done;
+    boolean done = false;
     EmailBox emailBox = getEmailBox(user);
-    List<Email> emails = emailBox.getEmailList();
-    emails.remove(email);
-    done = writeEmailBoxAsJSON(emailBox, user);
+    if (emailBox != null) {
+      List<Email> emails = emailBox.getEmailList();
+      emails.remove(email);
+      done = writeEmailBoxAsJSON(emailBox, user);
+    }
     return done;
   }
 
@@ -94,12 +96,14 @@ public class Model {
   }
 
   public boolean setEmailRead (User user, Email email, boolean read) {
-    boolean done;
+    boolean done = false ;
     EmailBox emailBox = getEmailBox(user);
-    List<Email> emails = emailBox.getEmailList();
-    int emailIndex = emails.indexOf(email);
-    emails.get(emailIndex).setRead(read);
-    done = writeEmailBoxAsJSON(emailBox, user);
+    if (emailBox != null) {
+      List<Email> emails = emailBox.getEmailList();
+      int emailIndex = emails.indexOf(email);
+      emails.get(emailIndex).setRead(read);
+      done = writeEmailBoxAsJSON(emailBox, user);
+    }
     return done;
   }
 
@@ -107,6 +111,7 @@ public class Model {
   private boolean addEmailToEmailBox(User user, EmailBox emailBox, List<Email> emails) {
     boolean done = false;
     emailBox.addEmails(emails);
+    // TODO usare writeEmailBoxAsJSON
     String filePath = this.dataPath + user.getUserName() + ".json";
     try {
       Writer writer = new FileWriter(filePath);

@@ -33,7 +33,7 @@ public class Connection implements Runnable{
   @Override
   public void run() {
     try {
-      Object o = null;
+      Object o;
       if (!closed) {
         try {
           if ((o = inputStream.readObject()) != null) {
@@ -63,30 +63,7 @@ public class Connection implements Runnable{
     this.user = user;
   }
 
-  private boolean verifyUser(User user) {
-    return this.model.existUser(user);
-  }
-
-  private void closeConnection() {
-    if (!closed) {
-      try {
-        if (this.user != null) {
-          ps.println(this.user.getUserName() + " closed connection");
-        }
-        inputStream.close();
-        outputStream.close();
-        socket.close();
-        this.user = null;
-        this.model = null;
-        this.closed = true;
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
   private void handleCall(Command command) throws IOException, ClassNotFoundException {
-    //System.out.println(command.getUser().getUserName() + " - " + command.getCommandKey());
     if (!closed) {
       Object o;
       try {
@@ -122,9 +99,28 @@ public class Connection implements Runnable{
     }
   }
 
+  private void closeConnection() {
+    if (!closed) {
+      try {
+        if (this.user != null) {
+          ps.println(this.user.getUserName() + " closed connection");
+        }
+        inputStream.close();
+        outputStream.close();
+        socket.close();
+        this.user = null;
+        this.model = null;
+        this.closed = true;
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
   private void loginUser(User user) throws IOException {
     if (!closed) {
       if (verifyUser(user)) {
+        // TODO capire perchè viene fatta sta cosa
         this.model.addUser(user);
         this.user = user;
         outputStream.writeObject(true);
@@ -135,6 +131,10 @@ public class Connection implements Runnable{
         closeConnection();
       }
     }
+  }
+
+  private boolean verifyUser(User user) {
+    return this.model.existUser(user);
   }
 
   private void freeUser() {
@@ -166,6 +166,7 @@ public class Connection implements Runnable{
     if (!closed) {
       Boolean operation_result = this.model.setEmailRead(user, email, read);
       this.outputStream.writeObject(operation_result);
+
       String message;
       if (read) {
         message = email.getUuid() + " as read";
@@ -191,9 +192,5 @@ public class Connection implements Runnable{
         this.ps.println(this.user.getUserName() + " : ERROR while deleting email " + email.getUuid());
       }
     }
-  }
-
-  boolean isClosed() {
-    return closed;
   }
 }

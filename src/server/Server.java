@@ -8,19 +8,18 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server extends Thread{
   private ServerSocket serverSocket;
   private ExecutorService executorService;
-  private PrintStream ps;
-  private List<Connection> connectionList = new ArrayList();
-  private List<String> userList = new ArrayList<>();
-  private Model model;
-  private int nThread = 5;
-  private boolean stop = false;
+  final private PrintStream ps;
+  final private List<Connection> connectionList = new ArrayList();
+  final private List<String> userList = new ArrayList<>();
+  final private Model model;
+  final private int nThread = 5;
+  final private boolean stop = false;
 
   Server(PrintStream ps) {
     this.model = new Model(ps);
@@ -61,5 +60,6 @@ public class Server extends Thread{
   }
 
   void stopServer() {
+    // TODO
   }
 }

@@ -25,11 +25,13 @@ public class LoginController {
 
   @FXML
   public void handleLoginButton(ActionEvent event) {
+    // TODO perchè lo faccio qui e non solo nel caso in cui la mail sia valida?
     this.model.setUser(new User(tf_email.getText()));
     Connection connection = model.getConnection();
     try {
       this.model.connectUser();
     } catch(SocketException ex) {
+      // TODO creare classe di testi/messaggi
       Alert a = getDialog("Server non raggiungibile", "Server non raggiungibile, riprova più tardi.");
       a.showAndWait();
     }

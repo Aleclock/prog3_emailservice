@@ -25,6 +25,7 @@ public class Main extends Application {
   public void stop() throws Exception {
     //controller.removeListener(); TODO capire che ascoltatori rimuovere
     loginController.getModel().closeConnection();
+    // TODO capire se la connessione con il server viene chiusa ogni volta (ogni volta viene aperta e chiusa la connessione) oppure no
   }
 
   public static void main (String[] args) {

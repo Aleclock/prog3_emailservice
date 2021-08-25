@@ -60,6 +60,7 @@ public class NewEmailController {
       }
 
       if (correct) {
+        // TODO qua potrei passare direttamente la lista di utenti invece della stringa di utenti
         String message = this.model.requestSendMail(recipients, subject, body);
         String cssValue;
         if (message.contains("successfully")) {
