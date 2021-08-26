@@ -12,9 +12,10 @@
       <AnchorPane prefHeight="37.0" prefWidth="600.0">
          <children>
             <Button layoutX="435.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleReplyAll" text="Rispondi a tutti" />
-            <Button layoutX="533.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleDeleteEmail" text="Delete" AnchorPane.rightAnchor="10.0" />
             <Button layoutX="365.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleReply" text="Rispondi" />
+            <Button layoutX="533.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleDeleteEmail" text="Delete" AnchorPane.rightAnchor="10.0" />
             <Button layoutX="309.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleForward" text="Inoltra" />
+            <Button layoutX="208.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleReadUnread" text="Read / Unread" />
          </children>
       </AnchorPane>
       <AnchorPane prefHeight="91.0" prefWidth="600.0">

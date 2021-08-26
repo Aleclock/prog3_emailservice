@@ -76,8 +76,7 @@ public class NewEmailController {
         this.label_email_status.setStyle(cssValue);
         this.label_email_status.setText("Recipient's email not valid");
 
-        // TODO andare in sleep per tot secondi
-        // TODO rimuovere
+        // TODO andare in sleep per tot secondi e poi chiudere la finestra
       }
     } catch(IOException e) {
       // TODO gestire errori e messaggi

@@ -16,8 +16,6 @@ public class CustomListViewItem extends ListCell<Email> {
   private Label date;
   private Circle status;
 
-  // TODO al momento in entrambe le schermate (ricevute/inviate) viene visualizato il sender (in inviate sarebbe meglio visualizzare il recipients)
-
   public CustomListViewItem() {
     super();
     try {

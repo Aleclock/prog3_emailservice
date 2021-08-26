@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import lib.LabelMessage;
 import lib.User;
 import java.io.IOException;
 import java.net.SocketException;
@@ -25,20 +26,18 @@ public class LoginController {
 
   @FXML
   public void handleLoginButton(ActionEvent event) {
-    // TODO perchè lo faccio qui e non solo nel caso in cui la mail sia valida?
-    this.model.setUser(new User(tf_email.getText()));
     Connection connection = model.getConnection();
     try {
       this.model.connectUser();
     } catch(SocketException ex) {
-      // TODO creare classe di testi/messaggi
-      Alert a = getDialog("Server non raggiungibile", "Server non raggiungibile, riprova più tardi.");
+      Alert a = getDialog(LabelMessage.serverUnreachableTitle, LabelMessage.serverUnreachableLabel);
       a.showAndWait();
     }
 
     if (this.model.matchesEmailFormat(tf_email.getText()) && connection.login(tf_email.getText())) {
       try {
-        connection.setUser(this.model.getUser()); // TODO capire se ha senso e se metterlo qua
+        this.model.setUser(new User(tf_email.getText()));
+        connection.setUser(this.model.getUser());
         FXMLLoader loader = new FXMLLoader(getClass().getResource("res/client_main_scene.fxml"));
         BorderPane root = loader.load();
         MainSceneController controller = loader.getController();
@@ -59,8 +58,7 @@ public class LoginController {
         ex.printStackTrace();
       }
     } else {
-      // TODO questo è un errore generico, magari differenziare
-      label_error.setText("Please enter a valid email address");
+      label_error.setText(LabelMessage.loginFailed);
     }
   }
 

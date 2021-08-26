@@ -41,7 +41,6 @@ public class Model {
         Gson gson = new Gson();
         emailBox = gson.fromJson(jsonFile, EmailBox.class);
       } catch (FileNotFoundException e) {
-        this.ps.println(user.getUserName() + ": la lettura della casella email non è andata a buon fine");
         e.printStackTrace();
       }
     }

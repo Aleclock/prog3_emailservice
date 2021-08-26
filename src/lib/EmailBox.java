@@ -12,10 +12,16 @@ public class EmailBox implements Serializable {
     this.emailList = emailList;
   }
 
-  // TODO valutare se aggiungere il setter
+  public void setUser(User user) {
+    this.user = user;
+  }
 
   public void addEmails(List<Email> emails) {
     this.emailList.addAll(0, emails);
+  }
+
+  public void setEmailList(List<Email> emails) {
+    this.emailList = emails;
   }
 
   public User getUser() {
@@ -28,13 +34,15 @@ public class EmailBox implements Serializable {
 
   @Override
   public String toString() {
-    StringBuilder emails = new StringBuilder();
-    emails.append("User: ").append(this.user.getUserName()).append("\n");
-    emails.append("Emails:\n");
+    StringBuilder emailsString = new StringBuilder();
+    emailsString.append("User: ").append(this.user.getUserName()).append("\n");
+    emailsString.append("Emails:\n");
     for (Email email: this.emailList) {
-      emails.append(email.getDateSent() + " - " + email.getSubject());
-      // TODO aggiungere tutto
+      emailsString.append(email.getDateSent() + " - " + email.getSubject() + "\n");
+      emailsString.append("Sender:" + email.getSender() + "\n");
+      emailsString.append("Recipients: " + email.getRecipients() + "\n");
+      emailsString.append("Body: " + email.getBody() + "\n\n");
     }
-    return emails.toString();
+    return emailsString.toString();
   }
 }

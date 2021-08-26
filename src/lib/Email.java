@@ -22,6 +22,7 @@ public class Email implements Serializable {
   // TODO capire se ha più senso impostare l'id a livello di server o quando viene creato l'oggetto Email
 
   public Email(User sender, List<User> recipients, String subject, String body) {
+    Date currentDate = new Date();
     setValues(sender, recipients, new Date(), subject, body);
   }
 

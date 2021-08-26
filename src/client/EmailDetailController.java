@@ -1,5 +1,6 @@
 package client;
 
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,8 +10,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lib.ColorManager;
 import lib.EmailProperty;
+import lib.LabelMessage;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class EmailDetailController {
   private Model model;
@@ -23,12 +29,11 @@ public class EmailDetailController {
   public void initModel(Model model) {
     this.model = model;
     this.model.getCurrentEmailSelected().addListener( (obs, oldEmail, newEmail) -> {
-      System.out.println(oldEmail + " , " + newEmail);
+      //System.out.println(oldEmail + " , " + newEmail);
       if (newEmail != null) {
         this.label_recipipients.textProperty().bindBidirectional(newEmail.getRecipientsProperty());
         this.label_subject.textProperty().bindBidirectional(newEmail.getSubjectProperty());
         this.label_sender.textProperty().bindBidirectional(newEmail.getSenderProperty());
-        // TODO inserire una data formattata decentemente
         this.label_date.textProperty().bindBidirectional(newEmail.getDateProperty());
         this.label_body.textProperty().bindBidirectional(newEmail.getBodyProperty());
       }
@@ -39,9 +44,9 @@ public class EmailDetailController {
   public void handleReplyAll(ActionEvent event) {
     NewEmailController controller = loadNewMailScene();
     if (controller != null) {
-      String recipients = this.label_sender.textProperty().get() + label_recipipients.textProperty().get();
+      String recipients = this.label_sender.textProperty().get() + " " + label_recipipients.textProperty().get();
       recipients = recipients.replace(this.model.getUser().getUserName(), "");
-      recipients = recipients.replace(" ,", "");
+      recipients = recipients.replace(" , ", "");
       controller.setRecipients(recipients);
       controller.setSubject("RE: " + this.label_subject.textProperty().get());
     }
@@ -84,6 +89,14 @@ public class EmailDetailController {
       controller.setSubject(this.label_subject.textProperty().get());
       controller.setBody(this.label_body.textProperty().get());
     }
+  }
+
+  @FXML
+  public void handleReadUnread(ActionEvent event) {
+    EmailProperty emailProperty = this.model.getCurrentEmailSelected().get();
+    System.out.println(emailProperty.getUuid() + " - " + emailProperty.getSubject());
+    boolean result = this.model.setEmailReadorNot(emailProperty.getUuid(), false);
+    // TODO al momento si rompe tutto
   }
 
   // TODO al momento è brutto, un'idea potrebbe essere quella di selezionare la mail successiva quando la mail corrente viene eliminata

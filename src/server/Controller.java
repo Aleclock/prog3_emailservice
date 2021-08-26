@@ -37,6 +37,7 @@ public class Controller {
     this.server.startServer();
   }
 
+  // TODO attenzione non si chiude il server.
   private void pause() {
     this.server.stopServer();
   }

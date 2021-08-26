@@ -88,7 +88,6 @@ public class MainSceneController {
     }
 
     lv_emails.getSelectionModel().selectedItemProperty().addListener( (obs, oldSelection, newSelection) -> {
-      // TODO capire a cosa serve
       if (!this.listAlreadySelected) {
         this.pane_email_detail.setVisible(true);
         this.listAlreadySelected = true;

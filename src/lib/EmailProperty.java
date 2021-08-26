@@ -3,6 +3,11 @@ package lib;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 // TODO qui ho fatto un po' di casino per inserire l'uuid, vedere se funziona con i vari cast
 public class EmailProperty {
   private final StringProperty recipients = new SimpleStringProperty();
@@ -17,7 +22,8 @@ public class EmailProperty {
     setUuid(email.getUuid());
     setSubject(email.getSubject());
     setSender(email.getSender().getUserName());
-    setDate(email.getDateSent().toString());
+    //setDate(email.getDateSent().toString());
+    setDate(getFormattedDate(email.getDateSent()));
     setBody(email.getBody());
   }
 
@@ -91,5 +97,22 @@ public class EmailProperty {
 
   public void setDate (String date) {
     this.getDateProperty().set(date);
+  }
+
+  private String getFormattedDate (Date date) {
+    SimpleDateFormat targetFormat = new SimpleDateFormat("EEE MMM d, HH:mm", Locale.ENGLISH);
+    return  targetFormat.format(date);
+  }
+
+  private String getFormattedDate (StringProperty date) {
+    SimpleDateFormat originalFormat = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+    SimpleDateFormat targetFormat = new SimpleDateFormat("EEE, MMM d, HH:mm");
+    try {
+      Date d = originalFormat.parse(date.getValue());
+      return targetFormat.format(d);
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+    return date.getValue();
   }
 }

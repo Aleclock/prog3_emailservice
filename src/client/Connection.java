@@ -1,9 +1,6 @@
 package client;
 
-import lib.Command;
-import lib.Email;
-import lib.EmailBox;
-import lib.User;
+import lib.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -64,7 +61,6 @@ public class Connection {
   public boolean login(String email){
     if (this.outputStream != null) {
       try {
-        // TODO se faccio il login forse dopo devo settare this.user
         this.outputStream.writeObject(new Command(new User(email), "login", null));
         Object o = this.inputStream.readObject();
         if (o instanceof Boolean) {
@@ -88,7 +84,8 @@ public class Connection {
          */
         this.outputStream.writeObject(new Command(this.user, "read_emails", null));
         Object o = this.inputStream.readObject();
-        if (o instanceof EmailBox emailBox) {
+        if (o instanceof EmailBox) {
+          EmailBox emailBox = (EmailBox) o;
           emails = emailBox.getEmailList();
         } else {
           // TODO lettura email box fallita
@@ -109,9 +106,9 @@ public class Connection {
         Object o = inputStream.readObject();
         if (o instanceof Boolean) {
           if ((Boolean) o) {
-            message = "Email successfully sent";
+            message = LabelMessage.emailSentSuccess;
           } else {
-            message = "Error: email not sent";
+            message = LabelMessage.emailSentError;
           }
         }
       } catch (IOException | ClassNotFoundException e) {
@@ -130,9 +127,9 @@ public class Connection {
         Object o = inputStream.readObject();
         if (o instanceof Boolean) {
           if ((Boolean) o) {
-            message = "Email successfully deleted";
+            message = LabelMessage.emailDeleteSuccess;
           } else {
-            message = "Error: email not deleted";
+            message = LabelMessage.emailDeleteError;
           }
         }
       } catch (IOException | ClassNotFoundException e) {
@@ -153,8 +150,7 @@ public class Connection {
         } else {
           code = "set_email_unread";
         }
-        // TODO qua usare code e aggiungere la funzione nel server
-        Command command = new Command(this.user, "set_email_read", email);
+        Command command = new Command(this.user, code, email);
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
         if (o instanceof Boolean) {

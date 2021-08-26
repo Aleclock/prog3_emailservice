@@ -83,6 +83,7 @@ public class Model {
     return message;
   }
 
+  // TODO cambiare modo per verificare il successo di un operazione: usare true/false
   public String requestDeleteEmail (long uuid) throws IOException{
     String message = "";
 
@@ -146,10 +147,17 @@ public class Model {
     emailList.addAll(0, newEmails);
   }
 
-  synchronized public void setEmailReadorNot(Email email, boolean read) {
+  synchronized public boolean setEmailReadorNot(long uuid, boolean read) {
+    Email email = getEmailByUUID(uuid);
+    System.out.println(email);
+    return setEmailReadorNot(email, read);
+  }
+
+  synchronized public boolean setEmailReadorNot(Email email, boolean read) {
+    boolean result = false;
     try {
       connectUser();
-      boolean result = connection.setRead(email, read);
+      result = connection.setRead(email, read);
       if (result) {
         getEmailByUuid(this.emails, email.getUuid()).setRead(read);
 
@@ -163,6 +171,7 @@ public class Model {
     } catch (SocketException e) {
       e.printStackTrace();
     }
+    return result;
   }
 
   private Email getEmailByUUID (long id) {
@@ -170,7 +179,7 @@ public class Model {
     if (this.emails != null) {
       List<Email> selectedEmail = this.emails.stream().filter(e -> e.getUuid() == id).collect(Collectors.toList());
       if (!selectedEmail.isEmpty()) {
-        // TODO potrebbero esserci più mail con lo stesso id?
+        // TODO potrebbero esserci più mail con lo stesso id
         retrievedEmail = selectedEmail.get(0);
       }
     }

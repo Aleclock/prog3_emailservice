@@ -117,6 +117,7 @@ public class Connection implements Runnable{
     }
   }
 
+  // TODO se l'utente è già loggato dare errore
   private void loginUser(User user) throws IOException {
     if (!closed) {
       if (verifyUser(user)) {
@@ -146,6 +147,11 @@ public class Connection implements Runnable{
   private void readEmails() throws IOException{
     if (!closed) {
       EmailBox emailBox = model.getEmailBox(this.user);
+      if (emailBox != null) {
+        this.ps.println(user.getUserName() + ": lettura della casella email andata a buon fine");
+      } else {
+        this.ps.println(user.getUserName() + ": la lettura della casella email non è andata a buon fine");
+      }
       this.outputStream.writeObject(emailBox);
     }
   }
