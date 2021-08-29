@@ -22,8 +22,8 @@ public class Main extends Application {
   }
 
   @Override
-  public void stop() throws Exception {
-    //controller.removeListener(); TODO capire che ascoltatori rimuovere
+  public void stop()  {
+    //controller.removeListener(); TODO capire che ascoltatori rimuovere (gli ascoltatori vengono settati nel MainSceneController e non so quando rimuoverli)
     loginController.getModel().closeConnection();
     // TODO capire se la connessione con il server viene chiusa ogni volta (ogni volta viene aperta e chiusa la connessione) oppure no
   }

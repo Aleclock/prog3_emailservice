@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import lib.ColorManager;
+import lib.LabelMessage;
 import lib.User;
 
 import java.io.IOException;
@@ -60,8 +61,7 @@ public class NewEmailController {
       }
 
       if (correct) {
-        // TODO qua potrei passare direttamente la lista di utenti invece della stringa di utenti
-        String message = this.model.requestSendMail(recipients, subject, body);
+        String message = this.model.requestSendMail(recipientsUser, subject, body);
         String cssValue;
         if (message.contains("successfully")) {
           // TODO valutare se chiudere la finestra nel caso in cui l'email sia stata inviata correttamente
@@ -74,7 +74,7 @@ public class NewEmailController {
       } else {
         String cssValue = "-fx-background-color: " + ColorManager.errorColor;
         this.label_email_status.setStyle(cssValue);
-        this.label_email_status.setText("Recipient's email not valid");
+        this.label_email_status.setText(LabelMessage.client_sendEmail_emailNotValid_error);
 
         // TODO andare in sleep per tot secondi e poi chiudere la finestra
       }

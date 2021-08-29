@@ -2,9 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lib.Email;
-import lib.EmailBox;
-import lib.User;
+import lib.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +10,28 @@ import java.util.Scanner;
 
 public class Model {
   final private String dataPath = "src/server/data/";
-  private PrintStream ps; // TODO forse non è il model che si deve occupare della scrittura sull'interfaccia
   final private List<String> userList = new ArrayList<>();
   private List<User> connectedUser = new ArrayList<>();
 
-  Model(PrintStream ps){
-    this.ps = ps;
+  Model(){
     initUserList();
   }
 
+  public OperationResponse<Boolean, String> loginUser(User user) {
+    OperationResponse<Boolean, String> result = new OperationResponse<>(false, "");
+
+    if (existUser(user)) {
+      result.set(true, LabelMessage.server_userLogin);
+      if (isAlreadyLogged(user)) {
+        result.set(false, LabelMessage.server_userLogin_alreadyLogged_error);
+      }
+    } else {
+      result.set(false, LabelMessage.server_userLogin_noExist_error);
+    }
+    return result;
+  }
+
+  // TODO questo potrebbe dare problemi, non ci sono controlli
   public EmailBox getOrCreateEmailBox(User user) {
     EmailBox emailBox = getEmailBox(user);
     if (emailBox == null) {
@@ -35,7 +46,7 @@ public class Model {
     String filePath = this.dataPath + user.getUserName() + ".json";
     File file = new File(filePath);
     if (file.exists() && file.isFile()) {
-      BufferedReader jsonFile = null;
+      BufferedReader jsonFile;
       try {
         jsonFile = new BufferedReader(new FileReader(filePath));
         Gson gson = new Gson();
@@ -47,39 +58,53 @@ public class Model {
     return emailBox;
   }
 
-  public boolean sendEmail(Email email) {
-    boolean done = false;
+  public OperationResponse<Boolean, String> sendEmail(Email email) {
+    OperationResponse<Boolean, String> result = new OperationResponse<>(false, "");
+    String message = "";
     List<Email> emails = new ArrayList<>();
     emails.add(email);
 
     for (User recipient : email.getRecipients()) {
       if (existUser(recipient)) {
         EmailBox emailboxRecipient = getOrCreateEmailBox(recipient);
-        done = addEmailToEmailBox(recipient, emailboxRecipient, emails);
+        result.setFirst(addEmailToEmailBox(recipient, emailboxRecipient, emails));
       } else {
-        this.ps.println(recipient.getUserName() + " not exist: Sending mail failed");
+        message = recipient.getUserName() + " not exist: Sending mail failed\n";
         List<Email> errorEmail = new ArrayList<>();
         errorEmail.add(createErrorEmail(email, recipient));
         addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), errorEmail);
       }
     }
-    if (done && !email.recipientsAsString().contains(email.getSender().getUserName())) {
+    if (result.getFirst() && !email.recipientsAsString().contains(email.getSender().getUserName())) {
       int emailIndex = emails.indexOf(email);
       emails.get(emailIndex).setRead(true);
-      done = addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), emails);
+      result.setFirst(addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), emails));
     }
-    return done;
+
+    if (result.getFirst()){
+      message += "\t" + LabelMessage.server_sendEmail_success;
+    } else {
+      message += "\t" + LabelMessage.server_sendEmail_error;
+    }
+    result.setSecond(message);
+    return result;
   }
 
-  public boolean deleteEmail (User user, Email email) {
-    boolean done = false;
+  public OperationResponse<Boolean, String> deleteEmail (User user, Email email) {
+    OperationResponse<Boolean, String> result = new OperationResponse<>(false, "");
     EmailBox emailBox = getEmailBox(user);
     if (emailBox != null) {
       List<Email> emails = emailBox.getEmailList();
       emails.remove(email);
-      done = writeEmailBoxAsJSON(emailBox, user);
+      result.setFirst(writeEmailBoxAsJSON(emailBox, user));
     }
-    return done;
+
+    if (result.getFirst()) {
+      result.setSecond(user.getUserName() + " : email " + email.getUuid() + " " + LabelMessage.server_deleteEmail_success);
+    } else {
+      result.setSecond(user.getUserName() + " : " + LabelMessage.server_deleteEmail_error + " " + email.getUuid());
+    }
+    return result;
   }
 
   private Email createErrorEmail(Email email, User userNonExistent) {
@@ -94,45 +119,44 @@ public class Model {
     return new Email(systemUser, email.getSender(), "Undelivered Mail Returned to Sender", bodyMessage);
   }
 
-  public boolean setEmailRead (User user, Email email, boolean read) {
-    boolean done = false ;
+  public OperationResponse<Boolean, String> setEmailRead (User user, Email email, boolean read) {
+    OperationResponse<Boolean, String> result = new OperationResponse<>(false, "");
     EmailBox emailBox = getEmailBox(user);
     if (emailBox != null) {
       List<Email> emails = emailBox.getEmailList();
       int emailIndex = emails.indexOf(email);
       emails.get(emailIndex).setRead(read);
-      done = writeEmailBoxAsJSON(emailBox, user);
+      result.setFirst(writeEmailBoxAsJSON(emailBox, user));
+
+      String message = user.getUserName();
+      if (result.getFirst()) {
+        message += " : set ";
+      } else {
+        message += " : failure setting ";
+      }
+
+      if (read) {
+        message += " as read";
+      } else {
+        message += " as unread";
+      }
+
+      result.setSecond(message);
     }
-    return done;
+    return result;
   }
 
   // TODO c'è la lista di Email perchè forse potrebbero esserci più email da inviare nello stesso momento, non so da vedere
   private boolean addEmailToEmailBox(User user, EmailBox emailBox, List<Email> emails) {
-    boolean done = false;
     emailBox.addEmails(emails);
-    // TODO usare writeEmailBoxAsJSON
-    String filePath = this.dataPath + user.getUserName() + ".json";
-    try {
-      Writer writer = new FileWriter(filePath);
-      Gson gson = new GsonBuilder().setPrettyPrinting().create();
-      gson.toJson(emailBox, writer);
-      writer.close();
-      done = true;
-    }  catch (IOException e) {
-      this.ps.println(user.getUserName() + ": scrittura della nuova mail fallita");
-      e.printStackTrace();
-    }
-    return done;
+    return writeEmailBoxAsJSON(emailBox, user);
   }
 
   private void createEmptyEmailBox(User user) {
     if (user != null) {
       List<Email> emailList = new ArrayList<>();
       EmailBox emailBox = new EmailBox(user, emailList);
-      boolean success = writeEmailBoxAsJSON(emailBox, user);
-      if (!success) {
-        this.ps.println(user.getUserName() + ": la creazione della casella mail non è andata a buon fine");
-      }
+      writeEmailBoxAsJSON(emailBox, user);
     }
   }
 
@@ -157,14 +181,16 @@ public class Model {
     return this.userList.contains(user.getUserName());
   }
 
+  public boolean isAlreadyLogged(User user) {
+    return this.connectedUser.contains(user);
+  }
+
   public void addUser(User user) {
     this.connectedUser.add(user);
   }
 
-  // TODO controllare che venga scritto "logout" in console server
   public void freeUser(User user) {
     this.connectedUser.remove(user);
-    this.ps.println(user.getUserName() + " logout");
   }
 
   private void initUserList(){

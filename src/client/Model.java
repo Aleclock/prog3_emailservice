@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lib.Email;
 import lib.EmailProperty;
+import lib.LabelMessage;
 import lib.User;
 
 import java.io.IOException;
@@ -37,6 +38,11 @@ public class Model {
     this.connection.getConnectionStatus().addListener(cl);
   }
 
+  public void removeListenerToConnectionStatus(ChangeListener<Boolean> cl) {
+    this.connection.getConnectionStatus().removeListener(cl);
+  }
+
+
   public void connectUser() throws SocketException {
     this.connection.connect();
     if (!this.connection.isConnected()) {
@@ -51,7 +57,6 @@ public class Model {
     Thread emailRefreshThread = new Thread(new Runnable() {
       @Override
       public void run() {
-        // TODO capire se farlo dipendere dallo stato della connessione
         while (true) {
           try {
             sleep(5000);
@@ -68,12 +73,10 @@ public class Model {
     emailRefreshThread.start();
   }
 
-  public String requestSendMail(String recipients, String subject, String body) throws IOException {
+  public String requestSendMail(List<User> recipientsList, String subject, String body) throws IOException {
     String message = "";
-    List<User> recipientsList = stringToUserList(recipients);
-
     if (recipientsList.isEmpty()) {
-      // TODO inserire almeno un destinatario
+      message = LabelMessage.client_sendEmail_noRecipient_error;
       // TODO valutare se segnalare anche che non c'è l'oggetto o il testo del messaggio
     } else {
       connectUser();
@@ -127,7 +130,6 @@ public class Model {
     try {
       connectUser();
       List<Email> newEmail = this.connection.getEmails();
-      // TODO da consegna dovrebbe creare un popup nel caso di nuove mail, in pratica le aggiunge semplicemente in testa
 
       if (this.emailsSent.isEmpty()) {
         List<Email> send = newEmail.stream().filter(e -> e.getSender().equals(this.user)).collect(Collectors.toList());

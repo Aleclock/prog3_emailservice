@@ -16,14 +16,13 @@ public class Server extends Thread{
   private ExecutorService executorService;
   final private PrintStream ps;
   final private List<Connection> connectionList = new ArrayList<>();
-  final private List<String> userList = new ArrayList<>(); // TODO Capire se usare
   final private Model model;
   final private int nThread = 5;
   private boolean stop = false;
 
   Server(PrintStream ps) {
     super();
-    this.model = new Model(ps);
+    this.model = new Model();
     this.ps = ps;
     this.setDaemon(true);
     start();

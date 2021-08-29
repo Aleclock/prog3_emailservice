@@ -10,7 +10,6 @@ import java.io.PrintStream;
 
 public class Main extends Application {
   Controller controller;
-  Server server;
 
   @Override
   public void start(Stage stage) {
@@ -23,7 +22,7 @@ public class Main extends Application {
 
       controller = loader.getController();
       PrintStream ps = controller.getPrintStream();
-      server = new Server(ps);
+      Server server = new Server(ps);
       controller.setServer(server);
     } catch (Exception e){
       e.printStackTrace();
@@ -32,7 +31,7 @@ public class Main extends Application {
 
   @Override
   public void stop() throws Exception {
-    server.stopServer();
+    controller.pauseServer();
     super.stop();
   }
 

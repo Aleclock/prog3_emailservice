@@ -1,11 +1,7 @@
 package server;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import lib.Command;
-import lib.Email;
-import lib.EmailBox;
-import lib.User;
+import lib.*;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -13,7 +9,7 @@ public class Connection implements Runnable{
   private PrintStream ps;
   private Model model;
   private Socket socket;
-  private User user;
+  private User user; // Questo varaibile è importante per la chiusura della connessione nel metodo closeConnection()
   private ObjectInputStream inputStream;
   private ObjectOutputStream outputStream;
   private boolean closed = false;
@@ -27,8 +23,7 @@ public class Connection implements Runnable{
       this.outputStream = new ObjectOutputStream(socket.getOutputStream());
       this.closed = false;
     } catch (IOException e){
-      e.printStackTrace();
-      // TODO invalid socket
+      ps.println(LabelMessage.error_invalidSocket);
     }
   }
 
@@ -41,7 +36,6 @@ public class Connection implements Runnable{
           if ((o = inputStream.readObject()) != null) {
             if ( o instanceof Command) {
               Command command = (Command) o;
-              // TODO capire se ha senso mantenere this.user
               setUser(command.getUser());
               handleCall(command);
             }
@@ -108,7 +102,7 @@ public class Connection implements Runnable{
     if (!closed) {
       try {
         if (this.user != null) {
-          ps.println(this.user.getUserName() + " closed connection");
+          ps.println(this.user.getUserName() + " " + LabelMessage.connectionClosed);
         }
         inputStream.close();
         outputStream.close();
@@ -122,18 +116,16 @@ public class Connection implements Runnable{
     }
   }
 
-  // TODO se l'utente è già loggato dare errore
   private void loginUser(User user) throws IOException {
     if (!closed) {
-      if (verifyUser(user)) {
-        // TODO capire perchè viene fatta sta cosa
+      OperationResponse<Boolean, String>  result = this.model.loginUser(user);
+      outputStream.writeObject(result.getFirst());
+      ps.println(user.getUserName() + " " + result.getSecond());
+      if (result.getFirst()) {
         this.model.addUser(user);
         this.user = user;
-        outputStream.writeObject(true);
-        this.model.getOrCreateEmailBox(this.user);
-        ps.println(this.user.getUserName() + " logged in");
+        this.model.getOrCreateEmailBox(user);
       } else {
-        outputStream.writeObject(false);
         closeConnection();
       }
     }
@@ -143,9 +135,14 @@ public class Connection implements Runnable{
     return this.model.existUser(user);
   }
 
+  private boolean alreadyLogged(User user) {
+    return this.model.isAlreadyLogged(user);
+  }
+
   private void freeUser() {
     if (!closed) {
       this.model.freeUser(this.user);
+      this.ps.println(user.getUserName() + " " + LabelMessage.server_userLogout);
     }
   }
 
@@ -153,9 +150,9 @@ public class Connection implements Runnable{
     if (!closed) {
       EmailBox emailBox = model.getEmailBox(this.user);
       if (emailBox != null) {
-        this.ps.println(user.getUserName() + ": lettura della casella email andata a buon fine");
+        this.ps.println(user.getUserName() + ": " + LabelMessage.server_readEmails_success);
       } else {
-        this.ps.println(user.getUserName() + ": la lettura della casella email non è andata a buon fine");
+        this.ps.println(user.getUserName() + ": " + LabelMessage.server_readEmails_error);
       }
       this.outputStream.writeObject(emailBox);
     }
@@ -163,45 +160,26 @@ public class Connection implements Runnable{
 
   private void sendEmail(Email email) throws IOException{
     if (!closed) {
-      boolean operation_result = this.model.sendEmail(email);
-      this.outputStream.writeObject(operation_result);
-      if (operation_result) {
-        this.ps.println(this.user.getUserName() + " : sent successfully.");
-      } else {
-        this.ps.println(this.user.getUserName() + " : sending mail failed");
-      }
+      OperationResponse<Boolean, String> result = this.model.sendEmail(email);
+      this.outputStream.writeObject(result.getFirst());
+      this.ps.println(this.user.getUserName() + " : " + result.getSecond());
     }
   }
 
   private void setEmailRead (Email email, User user, boolean read) throws IOException{
     if (!closed) {
-      Boolean operation_result = this.model.setEmailRead(user, email, read);
-      this.outputStream.writeObject(operation_result);
-
-      String message;
-      if (read) {
-        message = email.getUuid() + " as read";
-      } else {
-        message = email.getUuid() + " as unread";
-      }
-
-      if (operation_result) {
-        this.ps.println(this.user.getUserName() + " : set " + message);
-      } else {
-        this.ps.println(this.user.getUserName() + " : failure setting " + message);
-      }
+      OperationResponse<Boolean, String> result = this.model.setEmailRead(user, email, read);
+      this.outputStream.writeObject(result.getFirst());
+      this.ps.println(result.getSecond());
     }
   }
 
+  // TODO valutare di inviare non solo il valore booleano ma OperationResponse
   private void deleteEmail (Email email, User user) throws IOException{
     if (!closed) {
-      Boolean operation_result = this.model.deleteEmail(user, email);
-      this.outputStream.writeObject(operation_result);
-      if (operation_result) {
-        this.ps.println(this.user.getUserName() + " : email " + email.getUuid() + " successfully deleted");
-      } else {
-        this.ps.println(this.user.getUserName() + " : ERROR while deleting email " + email.getUuid());
-      }
+      OperationResponse<Boolean, String> result = this.model.deleteEmail(user, email);
+      this.outputStream.writeObject(result.getFirst());
+      this.ps.println(result.getSecond());
     }
   }
 }

@@ -3,7 +3,7 @@ package lib;
 import java.io.Serializable;
 
 public class User implements Serializable {
-  private String userName;
+  private final String userName;
 
   public User(String userName) {
     this.userName = userName;

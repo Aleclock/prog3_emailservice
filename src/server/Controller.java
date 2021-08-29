@@ -5,6 +5,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
+import lib.ColorManager;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -17,27 +18,37 @@ public class Controller {
   @FXML
   private ToggleButton toggle_server_status;
 
-  // TODO capire se questo metodo viene invocato in automatico o no
+  // This method is called automatically after the constructor and any @FXML field (https://stackoverflow.com/questions/51392203/what-does-initialize-mean-in-javafx)
   public void initialize() {
     this.ps = new PrintStream(new Console(console), true);
     System.setErr(ps);
+
+    this.toggle_server_status.setText("ON");
+    this.toggle_server_status.setStyle("-fx-background-color: " + ColorManager.successColor);
   }
 
   @FXML
   private void handleServerStatus(Event event){
+    String cssValue;
+    String message;
     if (toggle_server_status.isSelected()) {
-      start();
+      cssValue = "-fx-background-color: " + ColorManager.successColor;
+      message = "ON";
+      startServer();
     } else {
-      pause();
+      cssValue = "-fx-background-color: " + ColorManager.errorColor;
+      message = "OFF";
+      pauseServer();
     }
+    this.toggle_server_status.setStyle(cssValue);
+    this.toggle_server_status.setText(message);
   }
 
-  private void start() {
+  public void startServer() {
     this.server.startServer();
   }
 
-  // TODO attenzione non si chiude il server.
-  private void pause() {
+  public void pauseServer() {
     this.server.stopServer();
   }
 

@@ -69,6 +69,10 @@ public class MainSceneController {
     this.model.addListenerToConnectionStatus(this.connectionDownListener);
   }
 
+  private void removeConnectionListener() {
+    this.model.removeListenerToConnectionStatus(this.connectionDownListener);
+  }
+
   private void initListView(ListView lv_emails, Pane controller) {
     lv_emails.setItems(this.model.getEmailReceived());
 

@@ -18,10 +18,16 @@ public class LabelMessage {
 
   public static String new_email_sceneLoading_error = "Errore nel caricamento di new_email_scene.fxml";
 
+  public static String client_sendEmail_emailNotValid_error = "Recipient's email not valid";
+  public static String client_sendEmail_noRecipient_error = "Errore: inserire almeno un destinatario";
+
   // SERVER
 
+  public static String error_invalidSocket = "ERROR: Invalid socket";
   public static String serverClosingSocket = "Server: chiusura socket";
   public static String serverClosingSocketError = "Server: errore nella chiusura della socket";
+
+  public static String connectionClosed = "connection closed";
 
   public static String serverOpen = "Server status: aperto";
   public static String serverClosed = "Server status: chiuso";
@@ -32,4 +38,17 @@ public class LabelMessage {
 
   public static String socketTimout = "Server: socket timeout";
   public static String startedNewProcess = "Server: avviato nuovo processo.";
+
+  public static String server_userLogin = "logged in";
+  public static String server_userLogout = "logged out";
+  public static String server_userLogin_noExist_error = "user not exist";
+  public static String server_userLogin_alreadyLogged_error = "user already logged in";
+
+  public static String server_readEmails_success = "lettura della casella email andata a buon fine.";
+  public static String server_readEmails_error = "lettura della casella email fallita";
+  public static String server_sendEmail_success = "email sent successfully.";
+  public static String server_sendEmail_error = "sending mail failed";
+  public static String server_deleteEmail_success = "successfully deleted";
+  public static String server_deleteEmail_error = "ERROR while deleting email";
+
 }

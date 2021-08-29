@@ -49,7 +49,7 @@ public class Connection {
   public void close() {
     if (this.socket != null) {
       try {
-        this.outputStream.writeObject("close_connection");
+        this.outputStream.writeObject("close_connection"); // TODO sostituire con logout??
         this.outputStream.close();
         this.inputStream.close();
         this.socket.close();
