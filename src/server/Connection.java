@@ -1,5 +1,7 @@
 package server;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import lib.Command;
 import lib.Email;
 import lib.EmailBox;
@@ -37,7 +39,6 @@ public class Connection implements Runnable{
       if (!closed) {
         try {
           if ((o = inputStream.readObject()) != null) {
-
             if ( o instanceof Command) {
               Command command = (Command) o;
               // TODO capire se ha senso mantenere this.user
@@ -99,7 +100,11 @@ public class Connection implements Runnable{
     }
   }
 
-  private void closeConnection() {
+  public boolean isClosed() {
+    return this.closed;
+  }
+
+  public void closeConnection() {
     if (!closed) {
       try {
         if (this.user != null) {

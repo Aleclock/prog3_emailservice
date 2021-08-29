@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import lib.ConnectionDownListener;
 import lib.Email;
 import lib.EmailProperty;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.io.IOException;
 public class MainSceneController {
   private Model model;
   private boolean listAlreadySelected = false;
+  private ConnectionDownListener<Boolean> connectionDownListener;
 
   @FXML
   private Button refresh;
@@ -28,9 +30,7 @@ public class MainSceneController {
 
   public void initalize() {
     initListView(lv_emails, pane_email_detail);
-
-    // TODO aggiungere listener relativi alla connessione (se il server è down o qualcosa del genere)
-    // TODO aggiungere listener alla lista di email in modo tale che si aggiorni in automatico
+    initConnectionListener();
     this.model.refreshEmailList();
     refresh.fire();
   }
@@ -61,6 +61,12 @@ public class MainSceneController {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  private void initConnectionListener() {
+    this.connectionDownListener = new ConnectionDownListener<Boolean>();
+    this.connectionDownListener.setLabelLog(this.label_log);
+    this.model.addListenerToConnectionStatus(this.connectionDownListener);
   }
 
   private void initListView(ListView lv_emails, Pane controller) {

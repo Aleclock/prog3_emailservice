@@ -2,6 +2,7 @@ package client;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lib.Email;
@@ -30,6 +31,10 @@ public class Model {
     this.emails = FXCollections.observableList(new ArrayList<>());
     this.emailsSent = FXCollections.observableList(new ArrayList<>());
     this.emailReceived = FXCollections.observableList(new ArrayList<>());
+  }
+
+  public void addListenerToConnectionStatus(ChangeListener<Boolean> cl) {
+    this.connection.getConnectionStatus().addListener(cl);
   }
 
   public void connectUser() throws SocketException {
@@ -149,7 +154,6 @@ public class Model {
 
   synchronized public boolean setEmailReadorNot(long uuid, boolean read) {
     Email email = getEmailByUUID(uuid);
-    System.out.println(email);
     return setEmailReadorNot(email, read);
   }
 

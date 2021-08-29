@@ -1,5 +1,7 @@
 package client;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import lib.*;
 
 import java.io.IOException;
@@ -14,6 +16,7 @@ public class Connection {
   private User user;
   private ObjectInputStream inputStream;
   private ObjectOutputStream outputStream;
+  private BooleanProperty connectionStatus = new SimpleBooleanProperty(false);
   private boolean isConnected = false;
 
   public Connection() {}
@@ -32,9 +35,11 @@ public class Connection {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.isConnected = true;
+        this.connectionStatus.setValue(true);
       }
     } catch (IOException e){
       this.isConnected = false;
+      this.connectionStatus.setValue(false);
     }
   }
 
@@ -165,5 +170,13 @@ public class Connection {
 
   public boolean isConnected() {
     return this.isConnected;
+  }
+
+  public BooleanProperty getConnectionStatus() {
+    return this.connectionStatus;
+  }
+
+  public void setConnectionStatus(boolean value) {
+    this.connectionStatus.setValue(value);
   }
 }

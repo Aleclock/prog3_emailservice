@@ -30,7 +30,7 @@ public class LoginController {
     try {
       this.model.connectUser();
     } catch(SocketException ex) {
-      Alert a = getDialog(LabelMessage.serverUnreachableTitle, LabelMessage.serverUnreachableLabel);
+      Alert a = createDialog(LabelMessage.serverUnreachableTitle, LabelMessage.serverUnreachableLabel);
       a.showAndWait();
     }
 
@@ -46,7 +46,7 @@ public class LoginController {
         Stage stage = (Stage) root.getScene().getWindow();
         stage.setTitle(this.model.getUser().getUserName());
         stage.setWidth(1200);
-        stage.setHeight(450);
+        stage.setHeight(500);
         //stage.setMinWidth();
         //stage.setMinHeight(root.getScene().getHeight());
 
@@ -54,7 +54,7 @@ public class LoginController {
         controller.initalize();
 
         System.out.println("User :" + this.model.getUser().getUserName());
-      } catch(IOException ex) {
+      } catch (IOException ex) {
         ex.printStackTrace();
       }
     } else {
@@ -67,9 +67,10 @@ public class LoginController {
     label_error.setText("");
   }
 
-  private Alert getDialog(String title, String message) {
-    Alert alert = new Alert(Alert.AlertType.NONE);
+  private Alert createDialog(String title, String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
     alert.setTitle(title);
+    alert.setHeaderText(null);
     alert.setContentText(message);
     Stage nStage = (Stage) alert.getDialogPane().getScene().getWindow();
     return alert;

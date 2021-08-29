@@ -13,7 +13,7 @@ public class Main extends Application {
   Server server;
 
   @Override
-  public void start(Stage stage) throws Exception {
+  public void start(Stage stage) {
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("server_scene.fxml"));
       Parent root = loader.load();

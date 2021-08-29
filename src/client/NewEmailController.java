@@ -65,14 +65,14 @@ public class NewEmailController {
         String cssValue;
         if (message.contains("successfully")) {
           // TODO valutare se chiudere la finestra nel caso in cui l'email sia stata inviata correttamente
-          cssValue = "-fx-background-color: " + new ColorManager().getSuccessColor();
+          cssValue = "-fx-background-color: " + ColorManager.successColor;
         } else {
-          cssValue = "-fx-background-color: " + new ColorManager().getErrorColor();
+          cssValue = "-fx-background-color: " + ColorManager.errorColor;
         }
         this.label_email_status.setStyle(cssValue);
         this.label_email_status.setText(message);
       } else {
-        String cssValue = "-fx-background-color: " + new ColorManager().getErrorColor();
+        String cssValue = "-fx-background-color: " + ColorManager.errorColor;
         this.label_email_status.setStyle(cssValue);
         this.label_email_status.setText("Recipient's email not valid");
 

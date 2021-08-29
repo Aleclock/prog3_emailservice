@@ -1,35 +1,27 @@
 package client;
 
-import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lib.ColorManager;
 import lib.EmailProperty;
 import lib.LabelMessage;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class EmailDetailController {
   private Model model;
   @FXML
   private Label label_recipipients, label_subject, label_sender, label_date, label_body;
   @FXML
-  private VBox vbox_email_detail_root;
   private Label label_log;
 
   public void initModel(Model model) {
     this.model = model;
     this.model.getCurrentEmailSelected().addListener( (obs, oldEmail, newEmail) -> {
-      //System.out.println(oldEmail + " , " + newEmail);
       if (newEmail != null) {
         this.label_recipipients.textProperty().bindBidirectional(newEmail.getRecipientsProperty());
         this.label_subject.textProperty().bindBidirectional(newEmail.getSubjectProperty());
@@ -60,10 +52,10 @@ public class EmailDetailController {
 
       String cssValue;
       if (message.contains("successfully")) {
-        cssValue = "-fx-background-color: " + new ColorManager().getSuccessColor();
+        cssValue = "-fx-background-color: " + ColorManager.successColor;
         clearAll();
       } else {
-        cssValue = "-fx-background-color: " + new ColorManager().getErrorColor();
+        cssValue = "-fx-background-color: " + ColorManager.errorColor;
       }
       this.label_log.setStyle(cssValue);
       this.label_log.setText(message);
@@ -94,9 +86,7 @@ public class EmailDetailController {
   @FXML
   public void handleReadUnread(ActionEvent event) {
     EmailProperty emailProperty = this.model.getCurrentEmailSelected().get();
-    System.out.println(emailProperty.getUuid() + " - " + emailProperty.getSubject());
     boolean result = this.model.setEmailReadorNot(emailProperty.getUuid(), false);
-    // TODO al momento si rompe tutto
   }
 
   // TODO al momento è brutto, un'idea potrebbe essere quella di selezionare la mail successiva quando la mail corrente viene eliminata
@@ -123,7 +113,7 @@ public class EmailDetailController {
       controller.setSender(this.model.getUser().getUserName());
       return controller;
     } catch (IOException e) {
-      System.out.println("ERRORE nel caricamento di new_email_scene.fxml");
+      this.label_log.setText(LabelMessage.new_email_sceneLoading_error);
       e.printStackTrace();
     }
     return null;

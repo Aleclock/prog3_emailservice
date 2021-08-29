@@ -12,4 +12,24 @@ public class LabelMessage {
 
   public static String emailDeleteSuccess = "Email successfully deleted";
   public static String emailDeleteError = "Error: email not deleted";
+
+  public static String serverDown = "Server non raggiungibile, riprova più tardi.";
+  public static String serverWorking = "Server raggiungibile, puoi tornare ad usare il programma.";
+
+  public static String new_email_sceneLoading_error = "Errore nel caricamento di new_email_scene.fxml";
+
+  // SERVER
+
+  public static String serverClosingSocket = "Server: chiusura socket";
+  public static String serverClosingSocketError = "Server: errore nella chiusura della socket";
+
+  public static String serverOpen = "Server status: aperto";
+  public static String serverClosed = "Server status: chiuso";
+  public static String serverTermined = "Server: server terminato";
+  public static String serverNotTermined = "Server: server ancora in esecuzione";
+  public static String retryClosingServer = "Server: nuovo tentativo di chiusura";
+  public static String suspendedRequestAcceptance = "Server: Sospesa accettazione di nuove richieste";
+
+  public static String socketTimout = "Server: socket timeout";
+  public static String startedNewProcess = "Server: avviato nuovo processo.";
 }
