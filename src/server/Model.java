@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Model {
   final private String dataPath = "src/server/data/";
   final private List<String> userList = new ArrayList<>();
-  private List<User> connectedUser = new ArrayList<>();
+  private final List<User> connectedUser = new ArrayList<>();
 
   Model(){
     initUserList();
@@ -61,24 +61,20 @@ public class Model {
   public OperationResponse<Boolean, String> sendEmail(Email email) {
     OperationResponse<Boolean, String> result = new OperationResponse<>(false, "");
     String message = "";
-    List<Email> emails = new ArrayList<>();
-    emails.add(email);
 
     for (User recipient : email.getRecipients()) {
       if (existUser(recipient)) {
         EmailBox emailboxRecipient = getOrCreateEmailBox(recipient);
-        result.setFirst(addEmailToEmailBox(recipient, emailboxRecipient, emails));
+        result.setFirst(addEmailToEmailBox(recipient, emailboxRecipient, email));
       } else {
-        message = recipient.getUserName() + " not exist: Sending mail failed\n";
-        List<Email> errorEmail = new ArrayList<>();
-        errorEmail.add(createErrorEmail(email, recipient));
+        message = recipient.getUserName() + " " + LabelMessage.server_sendEmail_userNotExist;
+        Email errorEmail = createErrorEmail(email, recipient);
         addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), errorEmail);
       }
     }
     if (result.getFirst() && !email.recipientsAsString().contains(email.getSender().getUserName())) {
-      int emailIndex = emails.indexOf(email);
-      emails.get(emailIndex).setRead(true);
-      result.setFirst(addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), emails));
+      email.setRead(true);
+      result.setFirst(addEmailToEmailBox(email.getSender(), getEmailBox(email.getSender()), email));
     }
 
     if (result.getFirst()){
@@ -146,9 +142,8 @@ public class Model {
     return result;
   }
 
-  // TODO c'è la lista di Email perchè forse potrebbero esserci più email da inviare nello stesso momento, non so da vedere
-  private boolean addEmailToEmailBox(User user, EmailBox emailBox, List<Email> emails) {
-    emailBox.addEmails(emails);
+  private boolean addEmailToEmailBox(User user, EmailBox emailBox, Email email) {
+    emailBox.addEmail(email);
     return writeEmailBoxAsJSON(emailBox, user);
   }
 
@@ -194,7 +189,7 @@ public class Model {
   }
 
   private void initUserList(){
-    File file = new File("src/server/data/users.txt");
+    File file = new File( this.dataPath + "users.txt");
     try {
       Scanner scanner = new Scanner(file);
       while (scanner.hasNextLine()) {

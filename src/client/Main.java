@@ -17,15 +17,19 @@ public class Main extends Application {
     stage.setScene(scene);
     stage.show();
 
-    loginController = loader.getController();
-    loginController.initModel(new Model());
+    this.loginController = loader.getController();
+    this.loginController.initModel(new Model());
   }
 
   @Override
   public void stop()  {
-    //controller.removeListener(); TODO capire che ascoltatori rimuovere (gli ascoltatori vengono settati nel MainSceneController e non so quando rimuoverli)
-    loginController.getModel().closeConnection();
-    // TODO capire se la connessione con il server viene chiusa ogni volta (ogni volta viene aperta e chiusa la connessione) oppure no
+    MainSceneController mainSceneController = this.loginController.getMainSceneController();
+
+    if (mainSceneController != null) {
+      mainSceneController.removeConnectionListener();
+    }
+
+    this.loginController.getModel().closeConnection();
   }
 
   public static void main (String[] args) {

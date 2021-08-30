@@ -69,7 +69,7 @@ public class MainSceneController {
     this.model.addListenerToConnectionStatus(this.connectionDownListener);
   }
 
-  private void removeConnectionListener() {
+  public void removeConnectionListener() {
     this.model.removeListenerToConnectionStatus(this.connectionDownListener);
   }
 

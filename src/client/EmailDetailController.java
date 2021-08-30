@@ -89,7 +89,6 @@ public class EmailDetailController {
     boolean result = this.model.setEmailReadorNot(emailProperty.getUuid(), false);
   }
 
-  // TODO al momento è brutto, un'idea potrebbe essere quella di selezionare la mail successiva quando la mail corrente viene eliminata
   private void clearAll() {
     this.label_recipipients.setText("");
     this.label_body.setText("");

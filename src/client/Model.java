@@ -43,6 +43,7 @@ public class Model {
   }
 
 
+  // TODO capire se la connessione con il server viene chiusa ogni volta (ogni volta viene aperta e chiusa la connessione) oppure no
   public void connectUser() throws SocketException {
     this.connection.connect();
     if (!this.connection.isConnected()) {
@@ -69,7 +70,7 @@ public class Model {
         }
       }
     });
-    //emailRefreshThread.setDaemon(true); // TODO capire a cosa serve setDeamon
+    emailRefreshThread.setDaemon(true); // In questo modo il thread viene chiuso quando viene chiusa la finestra
     emailRefreshThread.start();
   }
 
@@ -77,7 +78,6 @@ public class Model {
     String message = "";
     if (recipientsList.isEmpty()) {
       message = LabelMessage.client_sendEmail_noRecipient_error;
-      // TODO valutare se segnalare anche che non c'è l'oggetto o il testo del messaggio
     } else {
       connectUser();
       Email email = new Email(this.user, recipientsList, subject, body);
@@ -146,6 +146,17 @@ public class Model {
       }
     } catch (SocketException e) {
       e.printStackTrace();
+    }
+  }
+
+  public void closeConnection() {
+    if (this.user != null) {
+      try {
+        connectUser();
+        this.connection.close();
+      } catch (SocketException e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -225,13 +236,6 @@ public class Model {
 
   public ObservableList<Email> getEmailReceived() {
     return this.emailReceived;
-  }
-
-  public void closeConnection() {
-    if (this.connection != null) {
-      connection.close();
-      System.out.println("Connessione chiusa");
-    }
   }
 
   // String... stringUtenti

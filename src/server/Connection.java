@@ -60,13 +60,12 @@ public class Connection implements Runnable{
 
   private void handleCall(Command command) throws IOException, ClassNotFoundException {
     if (!closed) {
-      Object o;
       try {
         switch (command.getCommandKey()) {
           case "login":
             loginUser(command.getUser());
             break;
-          case "close_connection":
+          case "logout":
             freeUser();
             break;
           case "read_emails":
@@ -131,14 +130,6 @@ public class Connection implements Runnable{
     }
   }
 
-  private boolean verifyUser(User user) {
-    return this.model.existUser(user);
-  }
-
-  private boolean alreadyLogged(User user) {
-    return this.model.isAlreadyLogged(user);
-  }
-
   private void freeUser() {
     if (!closed) {
       this.model.freeUser(this.user);
@@ -174,7 +165,7 @@ public class Connection implements Runnable{
     }
   }
 
-  // TODO valutare di inviare non solo il valore booleano ma OperationResponse
+  // TODO valutare di inviare al client non solo il valore booleano ma OperationResponse
   private void deleteEmail (Email email, User user) throws IOException{
     if (!closed) {
       OperationResponse<Boolean, String> result = this.model.deleteEmail(user, email);

@@ -14,6 +14,7 @@ import java.net.SocketException;
 
 public class LoginController {
   private Model model;
+  private MainSceneController mainSceneController;
 
   @FXML
   private TextField tf_email;
@@ -40,7 +41,7 @@ public class LoginController {
         connection.setUser(this.model.getUser());
         FXMLLoader loader = new FXMLLoader(getClass().getResource("res/client_main_scene.fxml"));
         BorderPane root = loader.load();
-        MainSceneController controller = loader.getController();
+        this.mainSceneController = loader.getController();
         tf_email.getScene().setRoot(loader.getRoot());
 
         Stage stage = (Stage) root.getScene().getWindow();
@@ -50,8 +51,8 @@ public class LoginController {
         //stage.setMinWidth();
         //stage.setMinHeight(root.getScene().getHeight());
 
-        controller.initModel(this.model);
-        controller.initalize();
+        this.mainSceneController.initModel(this.model);
+        this.mainSceneController.initalize();
 
         System.out.println("User :" + this.model.getUser().getUserName());
       } catch (IOException ex) {
@@ -72,11 +73,15 @@ public class LoginController {
     alert.setTitle(title);
     alert.setHeaderText(null);
     alert.setContentText(message);
-    Stage nStage = (Stage) alert.getDialogPane().getScene().getWindow();
+    //Stage nStage = (Stage) alert.getDialogPane().getScene().getWindow();
     return alert;
   }
 
   public Model getModel() {
     return this.model;
+  }
+
+  public MainSceneController getMainSceneController() {
+    return this.mainSceneController;
   }
 }

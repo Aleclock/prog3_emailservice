@@ -47,9 +47,9 @@ public class Connection {
    * Close connection with server
    */
   public void close() {
-    if (this.socket != null) {
+    if (this.outputStream != null) {
       try {
-        this.outputStream.writeObject("close_connection"); // TODO sostituire con logout??
+        this.outputStream.writeObject(new Command(this.user, "logout", null));
         this.outputStream.close();
         this.inputStream.close();
         this.socket.close();
@@ -144,12 +144,11 @@ public class Connection {
     return message;
   }
 
-  // TODO aggiungere anche per unread
   public boolean setRead(Email email, boolean read) {
     boolean result = false;
     if (this.outputStream != null) {
       try {
-        String code = "";
+        String code;
         if (read) {
           code = "set_email_read";
         } else {
@@ -176,6 +175,7 @@ public class Connection {
     return this.connectionStatus;
   }
 
+  // TODO ha senso usarlo per qualche operazione?
   public void setConnectionStatus(boolean value) {
     this.connectionStatus.setValue(value);
   }

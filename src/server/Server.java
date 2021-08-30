@@ -15,7 +15,7 @@ public class Server extends Thread{
   private ServerSocket serverSocket;
   private ExecutorService executorService;
   final private PrintStream ps;
-  final private List<Connection> connectionList = new ArrayList<>();
+  final private List<Connection> connectionList = new ArrayList<>(); // TODO forse non serve bo
   final private Model model;
   final private int nThread = 5;
   private boolean stop = false;

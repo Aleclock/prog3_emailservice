@@ -48,6 +48,7 @@ public class LabelMessage {
   public static String server_readEmails_error = "lettura della casella email fallita";
   public static String server_sendEmail_success = "email sent successfully.";
   public static String server_sendEmail_error = "sending mail failed";
+  public static String server_sendEmail_userNotExist = "not exist: Sending mail failed\n";
   public static String server_deleteEmail_success = "successfully deleted";
   public static String server_deleteEmail_error = "ERROR while deleting email";
 

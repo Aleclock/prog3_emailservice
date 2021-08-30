@@ -16,6 +16,10 @@ public class EmailBox implements Serializable {
     this.user = user;
   }
 
+  public void addEmail(Email email) {
+    this.emailList.add(0, email);
+  }
+
   public void addEmails(List<Email> emails) {
     this.emailList.addAll(0, emails);
   }
