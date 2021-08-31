@@ -1,13 +1,10 @@
 package server;
 
 import lib.LabelMessage;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -15,7 +12,6 @@ public class Server extends Thread{
   private ServerSocket serverSocket;
   private ExecutorService executorService;
   final private PrintStream ps;
-  final private List<Connection> connectionList = new ArrayList<>(); // TODO forse non serve bo
   final private Model model;
   final private int nThread = 5;
   private boolean stop = false;
@@ -46,7 +42,6 @@ public class Server extends Thread{
           Socket client = serverSocket.accept();
           Connection connection = new Connection(model, client, ps);
           executorService.execute(connection);
-          connectionList.add(connection);
           ps.println(LabelMessage.startedNewProcess);
         } catch(SocketTimeoutException ex){
           ps.println(LabelMessage.socketTimout);
@@ -62,14 +57,15 @@ public class Server extends Thread{
     }
   }
 
-  void startServer() {
+  public void startServer() {
     Thread thread = new Thread(this);
     thread.setDaemon(true);
     thread.start();
   }
 
-  void stopServer() {
-    stop = true;
+  // https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html#shutdown--
+  public void stopServer() {
+    this.stop = true;
 
     try {
       this.serverSocket.close();
@@ -78,41 +74,17 @@ public class Server extends Thread{
       ps.println(LabelMessage.serverClosingSocketError + " " + e.getMessage());
     }
 
-    executorService.shutdownNow();
-    if (!executorService.isTerminated()) {
-      for (Connection c : this.connectionList) {
-        if (c != null && !c.isClosed()) {
-          c.closeConnection();
-        }
-      }
-    }
+    executorService.shutdown();
 
-    if (executorService.isTerminated()) {
+    if (executorService.isShutdown()) {
       ps.println(LabelMessage.serverTermined);
     } else {
       ps.println(LabelMessage.serverNotTermined);
       ps.println(LabelMessage.retryClosingServer);
     }
-
-    retryClosingServer();
   }
 
-  private void retryClosingServer() {
-    if (this.serverSocket.isClosed() && executorService.isTerminated()) {
-      ps.println(LabelMessage.serverClosed);
-    } else {
-      ps.println(LabelMessage.serverOpen);
-      try {
-        sleep(1000);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-
-      if (executorService.isTerminated()) {
-        ps.println(LabelMessage.serverClosed);
-      } else {
-        stopServer();
-      }
-    }
+  public void isExecutorTermined() {
+    ps.println(this.executorService.isTerminated());
   }
 }

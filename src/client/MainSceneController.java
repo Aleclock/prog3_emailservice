@@ -1,5 +1,6 @@
 package client;
 
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,9 +10,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import lib.ConnectionDownListener;
-import lib.Email;
-import lib.EmailProperty;
+import javafx.util.Duration;
+import lib.*;
+
 import java.io.IOException;
 
 public class MainSceneController {
@@ -57,6 +58,7 @@ public class MainSceneController {
 
       NewEmailController newEmailController = loader.getController();
       newEmailController.initModel(model);
+      newEmailController.setStage(stage);
       newEmailController.setSender(this.model.getUser().getUserName());
     } catch (IOException e) {
       e.printStackTrace();
@@ -106,7 +108,18 @@ public class MainSceneController {
         Email email = (Email) newSelection;
         this.model.setCurrentEmail(new EmailProperty(email));
         if (!email.hasBeenRead()) {
-          this.model.setEmailReadorNot(email, true);
+          boolean result = this.model.setEmailReadorNot(email, true);
+
+          String cssValue;
+          if (result) {
+            this.label_log.setText("Email set as unread");
+            cssValue = "-fx-background-color: " + ColorManager.successColor;
+          } else {
+            this.label_log.setText("ERROR: impossible setting email as unread");
+            cssValue = "-fx-background-color: " + ColorManager.errorColor;
+          }
+          this.label_log.setStyle(cssValue);
+          removeLabelMessage(this.label_log, Duration.seconds(2));
         }
       }
     });
@@ -121,5 +134,15 @@ public class MainSceneController {
   private void setEmailSent (ActionEvent event) {
     this.lv_emails.setItems(this.model.getEmailsSent());
 
+  }
+
+  private void removeLabelMessage(Label label, Duration d) {
+    PauseTransition delayLog = new PauseTransition(d);
+    final String css = LabelMessage.css_backgroundColor + ColorManager.defaultColor;
+    delayLog.setOnFinished(e -> {
+      label.setText("");
+      label.setStyle(css);
+    });
+    delayLog.play();
   }
 }

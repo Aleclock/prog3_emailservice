@@ -29,7 +29,7 @@ public class Main extends Application {
       mainSceneController.removeConnectionListener();
     }
 
-    this.loginController.getModel().closeConnection();
+    this.loginController.getModel().logout();
   }
 
   public static void main (String[] args) {

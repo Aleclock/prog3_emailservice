@@ -181,16 +181,37 @@ La classe `Connection` si occupa direttamente della connessione del client con i
 - isConnected, valore che indica se il client è connesso con il server (tipo `boolean`).
 
 Il metodo `connect()` si occupa della creazione della connessione con il server. Inizialmente viene inizializzato il socket e, nel caso non sia nullo, vengono inizializzati i due stream di input e output.
+Nel `Model`, ogni volta che viene invocato il metodo `connect()` per creare una connessione con il server, dopo aver completatato l'operazione viene invocato il metodo `closeConnection()`. Questo metodo si occupa di settare a `null` le variabili inizializzate con `connect()`. L'unica variabile che non viene modificata è il valore `connectionStatus`. Questo perchè 
 
 ```java
-this.socket = new Socket(InetAddress.getLocalHost().getHostName(), 8189);
-if (socket != null) {
-  this.outputStream = new ObjectOutputStream(socket.getOutputStream());
-  this.inputStream = new ObjectInputStream(socket.getInputStream());
-  this.isConnected = true;
+public void connect(){
+  try {
+    this.socket = new Socket(InetAddress.getLocalHost().getHostName(), 8189);
+    if (socket != null) {
+      this.outputStream = new ObjectOutputStream(socket.getOutputStream());
+      this.inputStream = new ObjectInputStream(socket.getInputStream());
+      this.isConnected = true;
+      this.connectionStatus.setValue(true);
+    }
+  } catch (IOException e) {
+    this.isConnected = false;
+    this.connectionStatus.setValue(false);
+  }
+}
+
+public void closeConnection() {
+  try {
+    this.outputStream.close();
+    this.inputStream.close();
+    this.socket.close();
+  } catch (IOException e) {
+    this.isConnected = false;
+    e.printStackTrace();
+  }
+}
 ```
 
-Il metodo `close()` permette di chiudere la connessione con il server. Per farlo, nel caso in cui il socket non sia nullo, invia al server il codice (stringa) "close_connection". In questo modo il server sa che deve chiudere la connessione. In questo modo è possibile invocare il metodo `close()` sia sugli stream che sul socket. 
+Il metodo `logout()` permette di chiudere la connessione con il server. Per farlo, nel caso in cui lo stream di output non sia nullo, invia al server il comando con codice (stringa) "logout". In questo modo il server sa che deve chiudere la connessione e rimuovere l'utente dagli utenti connessi. In questo modo è possibile invocare il metodo `close()` sia sugli stream che sul socket. 
 
 Il metodo `login()` invia al server l'oggeto `User` e ottiene come risposta un valore booleano che dipende se l'email dell'utente esiste o meno. Nel caso in cui l'output stream non sia nullo, viene creato ed inviato al server un oggetto tipo `Command` con l'utente `user`, il comando "login" e la lista di email nulla. Il server ritorna un valore che viene letto nell'input stream tramite metodo `readObject()`. Nel caso in cui  l'oggetto ritornato sia booleano, questo viene ritornato dalla funzione, `false` altrimenti.
 

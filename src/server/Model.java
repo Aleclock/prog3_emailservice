@@ -12,11 +12,14 @@ public class Model {
   final private String dataPath = "src/server/data/";
   final private List<String> userList = new ArrayList<>();
   private final List<User> connectedUser = new ArrayList<>();
+  private UUIDGenerator uuidGenerator;
 
   Model(){
     initUserList();
+    this.uuidGenerator = new UUIDGenerator(dataPath);
   }
 
+  // TODO magari mostrare "Utenti collegati"
   public OperationResponse<Boolean, String> loginUser(User user) {
     OperationResponse<Boolean, String> result = new OperationResponse<>(false, "");
 
@@ -58,8 +61,9 @@ public class Model {
     return emailBox;
   }
 
-  public OperationResponse<Boolean, String> sendEmail(Email email) {
+  synchronized public OperationResponse<Boolean, String> sendEmail(Email email) {
     OperationResponse<Boolean, String> result = new OperationResponse<>(false, "");
+    System.out.println(this.uuidGenerator.generateUUID());
     String message = "";
 
     for (User recipient : email.getRecipients()) {
@@ -126,9 +130,9 @@ public class Model {
 
       String message = user.getUserName();
       if (result.getFirst()) {
-        message += " : set ";
+        message += " : set " + email.getUuid();
       } else {
-        message += " : failure setting ";
+        message += " : failure setting " + email.getUuid();
       }
 
       if (read) {
@@ -188,7 +192,7 @@ public class Model {
     this.connectedUser.remove(user);
   }
 
-  private void initUserList(){
+  private void initUserList() {
     File file = new File( this.dataPath + "users.txt");
     try {
       Scanner scanner = new Scanner(file);

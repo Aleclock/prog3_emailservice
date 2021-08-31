@@ -9,13 +9,11 @@ import lib.Email;
 import lib.EmailProperty;
 import lib.LabelMessage;
 import lib.User;
-
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static java.lang.Thread.sleep;
 
 public class Model {
@@ -42,14 +40,17 @@ public class Model {
     this.connection.getConnectionStatus().removeListener(cl);
   }
 
-
-  // TODO capire se la connessione con il server viene chiusa ogni volta (ogni volta viene aperta e chiusa la connessione) oppure no
-  public void connectUser() throws SocketException {
+  synchronized public void connectUser() throws SocketException {
     this.connection.connect();
     if (!this.connection.isConnected()) {
       throw new SocketException("Impossibile raggiungere il server");
     }
   }
+
+  synchronized public void closeConnection() throws SocketException {
+    this.connection.closeConnection();
+  }
+
 
   /**
    * Create a thread that call retrieveEmails method every 5000 seconds, in order to update client emails list
@@ -87,12 +88,14 @@ public class Model {
         this.emails.add(0, email);
         this.emailsSent.add(0, email);
       }
+
+      closeConnection();
     }
     return message;
   }
 
   // TODO cambiare modo per verificare il successo di un operazione: usare true/false
-  public String requestDeleteEmail (long uuid) throws IOException{
+  public String requestDeleteEmail (long uuid) throws IOException {
     String message = "";
 
     connectUser();
@@ -112,6 +115,8 @@ public class Model {
         }
       }
     }
+
+    closeConnection();
     return message;
   }
 
@@ -121,11 +126,11 @@ public class Model {
   }
 
   /*
-  synchronized in modo tale che se più thread tentano di eseguire questo metodo, non lo fanno in contemporanea. Se
+  Si utilizza synchronized in modo tale che se più thread tentano di eseguire questo metodo, non lo fanno in contemporanea. Se
   il metodo è disponibile, il primo thread può accedere, mentre se è occupato il thread viene messo in coda fino a quando
   non è disponibile
    */
-  // TODO ha senso usare due synchronized???
+  // TODO dovrei ritornare un result
   synchronized public void retrieveEmails() {
     try {
       connectUser();
@@ -136,24 +141,24 @@ public class Model {
         this.emailsSent.addAll(send);
       }
 
-      synchronized (this.emails) {
-        if (!newEmail.isEmpty()) {
-          List<Email> received = newEmail.stream().filter (e -> e.recipientsAsString().contains(this.user.getUserName())).distinct().collect(Collectors.toList());
+      if (!newEmail.isEmpty()) {
+        List<Email> received = newEmail.stream().filter (e -> e.recipientsAsString().contains(this.user.getUserName())).distinct().collect(Collectors.toList());
 
-          updateLists(received, this.emailReceived);
-          updateLists(newEmail, this.emails);
-        }
+        updateLists(received, this.emailReceived);
+        updateLists(newEmail, this.emails);
       }
+
+      closeConnection();
     } catch (SocketException e) {
       e.printStackTrace();
     }
   }
 
-  public void closeConnection() {
+  public void logout() {
     if (this.user != null) {
       try {
         connectUser();
-        this.connection.close();
+        this.connection.logout();
       } catch (SocketException e) {
         e.printStackTrace();
       }
@@ -185,6 +190,7 @@ public class Model {
           getEmailByUuid(this.emailReceived, email.getUuid()).setRead(read);
         }
       }
+      closeConnection();
     } catch (SocketException e) {
       e.printStackTrace();
     }

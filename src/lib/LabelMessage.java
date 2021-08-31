@@ -1,6 +1,9 @@
 package lib;
 
 public class LabelMessage {
+
+  public static String css_backgroundColor = "-fx-background-color: ";
+
   public static String operationSuccess = "Operazione riuscita";
   public static String operationFailed = "Operazione fallita";
   public static String serverUnreachableTitle = "Server non raggiungibile";

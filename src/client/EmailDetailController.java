@@ -1,11 +1,13 @@
 package client;
 
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import lib.ColorManager;
 import lib.EmailProperty;
 import lib.LabelMessage;
@@ -36,9 +38,10 @@ public class EmailDetailController {
   public void handleReplyAll(ActionEvent event) {
     NewEmailController controller = loadNewMailScene();
     if (controller != null) {
-      String recipients = this.label_sender.textProperty().get() + " " + label_recipipients.textProperty().get();
-      recipients = recipients.replace(this.model.getUser().getUserName(), "");
-      recipients = recipients.replace(" , ", "");
+      String recipients = this.label_recipipients.textProperty().get();
+      recipients = recipients.replace(" , ", " ");
+      recipients += " " + this.label_sender.textProperty().get();
+      recipients = recipients.replace(this.model.getUser().getUserName() + " ", "");
       controller.setRecipients(recipients);
       controller.setSubject("RE: " + this.label_subject.textProperty().get());
     }
@@ -52,14 +55,14 @@ public class EmailDetailController {
 
       String cssValue;
       if (message.contains("successfully")) {
-        cssValue = "-fx-background-color: " + ColorManager.successColor;
+        cssValue = LabelMessage.css_backgroundColor + ColorManager.successColor;
         clearAll();
       } else {
-        cssValue = "-fx-background-color: " + ColorManager.errorColor;
+        cssValue = LabelMessage.css_backgroundColor + ColorManager.errorColor;
       }
       this.label_log.setStyle(cssValue);
       this.label_log.setText(message);
-      // TODO if message contains "correctly" show banner, remove all texts
+      removeLabelMessage(this.label_log, Duration.seconds(2));
     } catch (IOException e) {
       // TODO handle error
     }
@@ -87,6 +90,16 @@ public class EmailDetailController {
   public void handleReadUnread(ActionEvent event) {
     EmailProperty emailProperty = this.model.getCurrentEmailSelected().get();
     boolean result = this.model.setEmailReadorNot(emailProperty.getUuid(), false);
+    String cssValue;
+    if (result) {
+      this.label_log.setText("Email set as unread");
+      cssValue = LabelMessage.css_backgroundColor + ColorManager.successColor;
+    } else {
+      this.label_log.setText("ERROR: impossible setting email as unread");
+      cssValue = LabelMessage.css_backgroundColor + ColorManager.errorColor;
+    }
+    this.label_log.setStyle(cssValue);
+    removeLabelMessage(this.label_log, Duration.seconds(2));
   }
 
   private void clearAll() {
@@ -107,12 +120,14 @@ public class EmailDetailController {
       stage.setScene(scene);
       stage.show();
 
-      NewEmailController controller = loader.getController();
-      controller.initModel(this.model);
-      controller.setSender(this.model.getUser().getUserName());
-      return controller;
+      NewEmailController newEmailController = loader.getController();
+      newEmailController.initModel(this.model);
+      newEmailController.setStage(stage);
+      newEmailController.setSender(this.model.getUser().getUserName());
+      return newEmailController;
     } catch (IOException e) {
       this.label_log.setText(LabelMessage.new_email_sceneLoading_error);
+      removeLabelMessage(this.label_log, Duration.seconds(2));
       e.printStackTrace();
     }
     return null;
@@ -120,5 +135,15 @@ public class EmailDetailController {
 
   public void setLabelLog(Label label) {
     this.label_log = label;
+  }
+
+  private void removeLabelMessage(Label label, Duration d) {
+    PauseTransition delayLog = new PauseTransition(d);
+    final String css = LabelMessage.css_backgroundColor + ColorManager.defaultColor;
+    delayLog.setOnFinished(e -> {
+      label.setText("");
+      label.setStyle(css);
+    });
+    delayLog.play();
   }
 }

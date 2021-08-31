@@ -46,7 +46,22 @@ public class Connection {
   /**
    * Close connection with server
    */
-  public void close() {
+
+  public void closeConnection() {
+    try {
+      this.outputStream.close();
+      this.inputStream.close();
+      this.socket.close();
+    } catch (IOException e) {
+      this.isConnected = false;
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Logout
+   */
+  public void logout() {
     if (this.outputStream != null) {
       try {
         this.outputStream.writeObject(new Command(this.user, "logout", null));

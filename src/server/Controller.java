@@ -44,6 +44,11 @@ public class Controller {
     this.toggle_server_status.setText(message);
   }
 
+  @FXML
+  private void handleExecutorStatus() {
+    this.server.isExecutorTermined();
+  }
+
   public void startServer() {
     this.server.startServer();
   }

@@ -48,6 +48,6 @@
       </HBox>
    </center>
    <bottom>
-      <Label fx:id="label_log" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="1200.0" text="adas" />
+      <Label fx:id="label_log" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="1200.0" text="" />
    </bottom>
 </BorderPane>

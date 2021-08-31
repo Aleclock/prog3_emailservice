@@ -1,8 +1,10 @@
 package lib;
 
+import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
+import javafx.util.Duration;
 
 public class ConnectionDownListener<B extends Boolean> implements ChangeListener<B> {
   private Label label_log;
@@ -19,6 +21,7 @@ public class ConnectionDownListener<B extends Boolean> implements ChangeListener
     } else {
       message = LabelMessage.serverWorking;
       cssValue = "-fx-background-color: " + ColorManager.successColor;
+      removeLabelMessage(this.label_log, Duration.seconds(2));
     }
 
     this.label_log.setStyle(cssValue);
@@ -27,5 +30,15 @@ public class ConnectionDownListener<B extends Boolean> implements ChangeListener
 
   public void setLabelLog(Label l) {
     this.label_log = l;
+  }
+
+  private void removeLabelMessage(Label label, Duration d) {
+    PauseTransition delayLog = new PauseTransition(d);
+    final String css = LabelMessage.css_backgroundColor + ColorManager.defaultColor;
+    delayLog.setOnFinished(e -> {
+      label.setText("");
+      label.setStyle(css);
+    });
+    delayLog.play();
   }
 }
