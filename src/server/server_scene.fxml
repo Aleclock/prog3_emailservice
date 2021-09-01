@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="373.0" prefWidth="622.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="server.Controller">
+<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="380.0" prefWidth="622.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="server.Controller">
    <children>
       <Label alignment="CENTER" layoutX="155.0" layoutY="177.0" style="&#10;" text="Drag components from Library here…" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
          <font>
@@ -16,9 +16,11 @@
          </font>
       </Label>
       <Separator layoutX="11.0" layoutY="53.0" prefHeight="0.0" prefWidth="600.0" />
-      <Label contentDisplay="TEXT_ONLY" layoutX="512.0" layoutY="19.0" prefHeight="17.0" prefWidth="48.0" text="Server" textAlignment="CENTER" />
+      <Label contentDisplay="TEXT_ONLY" layoutX="488.0" layoutY="20.0" prefHeight="17.0" prefWidth="76.0" text="Server status:" textAlignment="CENTER" />
       <ToggleButton fx:id="toggle_server_status" alignment="TOP_LEFT" layoutX="569.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleServerStatus" selected="true" text="OFF" textAlignment="CENTER" />
-      <TextArea fx:id="console" editable="false" layoutX="11.0" layoutY="66.0" prefHeight="307.0" prefWidth="600.0" />
-      <Button layoutX="67.0" layoutY="15.0" mnemonicParsing="false" text="Button" onAction="#handleExecutorStatus"/>
+      <TextArea fx:id="console" editable="false" layoutX="11.0" layoutY="76.0" prefHeight="297.0" prefWidth="600.0" />
+      <Button layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleClearConsole" text="Clear" />
+      <Label contentDisplay="TEXT_ONLY" layoutX="11.0" layoutY="58.0" prefHeight="17.0" prefWidth="100.0" text="Online users:" textAlignment="CENTER" />
+      <Label fx:id="label_connectedUser" contentDisplay="TEXT_ONLY" layoutX="110.0" layoutY="58.0" prefHeight="17.0" prefWidth="278.0" textAlignment="CENTER" />
    </children>
 </AnchorPane>

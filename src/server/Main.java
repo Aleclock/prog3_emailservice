@@ -24,6 +24,7 @@ public class Main extends Application {
       PrintStream ps = controller.getPrintStream();
       Server server = new Server(ps);
       controller.setServer(server);
+      controller.bindOpenConnection(Model.getOpenConnectionProperty());
     } catch (Exception e){
       e.printStackTrace();
     }

@@ -2,6 +2,9 @@ package server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import lib.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -14,9 +17,15 @@ public class Model {
   private final List<User> connectedUser = new ArrayList<>();
   private UUIDGenerator uuidGenerator;
 
+  private static final StringProperty stringOpenConnectionProperty = new SimpleStringProperty(Integer.toString(0));
+
   Model(){
     initUserList();
     this.uuidGenerator = new UUIDGenerator(dataPath);
+  }
+
+  public static StringProperty getOpenConnectionProperty() {
+    return stringOpenConnectionProperty;
   }
 
   // TODO magari mostrare "Utenti collegati"
@@ -186,10 +195,12 @@ public class Model {
 
   public void addUser(User user) {
     this.connectedUser.add(user);
+    Platform.runLater(() -> stringOpenConnectionProperty.setValue(String.valueOf(this.connectedUser.size())));
   }
 
   public void freeUser(User user) {
     this.connectedUser.remove(user);
+    Platform.runLater(() -> stringOpenConnectionProperty.setValue(String.valueOf(this.connectedUser.size())));
   }
 
   private void initUserList() {

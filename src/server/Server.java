@@ -1,5 +1,6 @@
 package server;
 
+import javafx.beans.property.SimpleStringProperty;
 import lib.LabelMessage;
 import java.io.*;
 import java.net.ServerSocket;
@@ -82,9 +83,5 @@ public class Server extends Thread{
       ps.println(LabelMessage.serverNotTermined);
       ps.println(LabelMessage.retryClosingServer);
     }
-  }
-
-  public void isExecutorTermined() {
-    ps.println(this.executorService.isTerminated());
   }
 }
