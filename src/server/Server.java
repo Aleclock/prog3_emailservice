@@ -78,7 +78,7 @@ public class Server extends Thread{
     executorService.shutdown();
 
     if (executorService.isShutdown()) {
-      ps.println(LabelMessage.serverTermined);
+      ps.println(LabelMessage.serverClosed);
     } else {
       ps.println(LabelMessage.serverNotTermined);
       ps.println(LabelMessage.retryClosingServer);

@@ -3,7 +3,6 @@ package client;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import lib.*;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,7 +15,7 @@ public class Connection {
   private User user;
   private ObjectInputStream inputStream;
   private ObjectOutputStream outputStream;
-  private BooleanProperty connectionStatus = new SimpleBooleanProperty(false);
+  final private BooleanProperty connectionStatus = new SimpleBooleanProperty(false);
   private boolean isConnected = false;
 
   public Connection() {}
@@ -31,7 +30,7 @@ public class Connection {
   public void connect(){
     try {
       this.socket = new Socket(InetAddress.getLocalHost().getHostName(), 8189);
-      if (socket != null) {
+      if (socket.isConnected()) {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.isConnected = true;
@@ -83,8 +82,8 @@ public class Connection {
       try {
         this.outputStream.writeObject(new Command(new User(email), "login", null));
         Object o = this.inputStream.readObject();
-        if (o.getClass() == Boolean.class) {
-          return (boolean) o;
+        if (o.getClass() == OperationResponse.class) {
+          return ((OperationResponse) o).getResult();
         }
       } catch (IOException | ClassNotFoundException e) {
         e.printStackTrace();
@@ -93,22 +92,20 @@ public class Connection {
     return false;
   }
 
+  /**
+   * il discorso è che ogni volta viene creata una nuova connessione, quindi è necessario inviare prima l'utente e
+   * poi l'azione da compiere, forse ha più senso inviare una coppia <User, String> dove String è l'azione da compiere
+   * quindi login, closeConnection, readEmails. in questo modo non è necessario inviare troppe cose
+   */
   public List<Email> getEmails() {
     List<Email> emails = null;
     if (this.outputStream != null) {
       try {
-        /**
-         * il discorso è che ogni volta viene creata una nuova connessione, quindi è necessario inviare prima l'utente e
-         * poi l'azione da compiere, forse ha più senso inviare una coppia <User, String> dove String è l'azione da compiere
-         * quindi login, closeConnection, readEmails. in questo modo non è necessario inviare troppe cose
-         */
         this.outputStream.writeObject(new Command(this.user, "read_emails", null));
         Object o = this.inputStream.readObject();
-        if (o.getClass() == EmailBox.class) {
-          EmailBox emailBox = (EmailBox) o;
+        if (o.getClass() == OperationResponse.class) {
+          EmailBox emailBox = ((OperationResponse) o).getEmailBox();
           emails = emailBox.getEmailList();
-        } else {
-          // TODO lettura email box fallita
         }
       } catch (IOException | ClassNotFoundException e) {
         e.printStackTrace();
@@ -117,46 +114,51 @@ public class Connection {
     return emails;
   }
 
-  public String sendEmail(Email email) {
-    String message = "";
+  public OperationResponse sendEmail(Email email) {
+    OperationResponse result = new OperationResponse(false, "");
     if (this.outputStream != null) {
       try {
         Command command = new Command(this.user, "send_email", email);
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
-        if (o.getClass() == Boolean.class) {
-          if ((Boolean) o) {
+        if (o.getClass() == OperationResponse.class) {
+          String message;
+          if (((OperationResponse) o).getResult()) {
             message = LabelMessage.emailSentSuccess;
+            result.setEmail(((OperationResponse) o).getEmail());
           } else {
             message = LabelMessage.emailSentError;
           }
+          result.set(((OperationResponse) o).getResult(), message);
         }
       } catch (IOException | ClassNotFoundException e) {
         e.printStackTrace();
       }
     }
-    return message;
+    return result;
   }
 
-  public String deleteEmail (Email email) {
-    String message = "";
+  public OperationResponse deleteEmail (Email email) {
+    OperationResponse result = new OperationResponse(false, "");
     if (this.outputStream != null) {
       try {
         Command command = new Command(this.user, "delete_email", email);
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
-        if (o.getClass() == Boolean.class) {
-          if ((Boolean) o) {
+        if (o.getClass() == OperationResponse.class) {
+          String message;
+          if (((OperationResponse) o).getResult()) {
             message = LabelMessage.emailDeleteSuccess;
           } else {
             message = LabelMessage.emailDeleteError;
           }
+          result.set(((OperationResponse) o).getResult(), message);
         }
       } catch (IOException | ClassNotFoundException e) {
         e.printStackTrace();
       }
     }
-    return message;
+    return result;
   }
 
   public boolean setRead(Email email, boolean read) {
@@ -172,8 +174,8 @@ public class Connection {
         Command command = new Command(this.user, code, email);
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
-        if (o.getClass() == Boolean.class) {
-          result = (Boolean) o;
+        if (o.getClass() == OperationResponse.class) {
+          result = ((OperationResponse) o).getResult();
         }
       } catch (IOException | ClassNotFoundException e) {
         e.printStackTrace();

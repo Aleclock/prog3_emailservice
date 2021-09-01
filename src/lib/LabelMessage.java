@@ -24,6 +24,9 @@ public class LabelMessage {
   public static String client_sendEmail_emailNotValid_error = "Recipient's email not valid";
   public static String client_sendEmail_noRecipient_error = "Errore: inserire almeno un destinatario";
 
+  public static String client_emailSetUnread_success = "Email set as unread";
+  public static String client_emailSetUnread_error = "ERROR: impossible setting email as unread";
+
   // SERVER
 
   public static String error_invalidSocket = "ERROR: Invalid socket";
@@ -34,7 +37,6 @@ public class LabelMessage {
 
   public static String serverOpen = "Server status: aperto";
   public static String serverClosed = "Server status: chiuso";
-  public static String serverTermined = "Server: server terminato";
   public static String serverNotTermined = "Server: server ancora in esecuzione";
   public static String retryClosingServer = "Server: nuovo tentativo di chiusura";
   public static String suspendedRequestAcceptance = "Server: Sospesa accettazione di nuove richieste";
@@ -54,5 +56,7 @@ public class LabelMessage {
   public static String server_sendEmail_userNotExist = "not exist: Sending mail failed\n";
   public static String server_deleteEmail_success = "successfully deleted";
   public static String server_deleteEmail_error = "ERROR while deleting email";
+  public static String server_getOrCreateEmailBox_success = "Email box retrieved correctly";
+  public static String server_getOrCreateEmailBox_error = "ERROR: Email box not retrieved correctly";
 
 }

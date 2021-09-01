@@ -30,7 +30,7 @@ public class MainSceneController {
   private Label label_log;
 
   public void initalize() {
-    initListView(lv_emails, pane_email_detail);
+    initListView(lv_emails);
     initConnectionListener();
     this.model.refreshEmailList();
     refresh.fire();
@@ -41,12 +41,12 @@ public class MainSceneController {
   }
 
   @FXML
-  public void handleRefreshButton(ActionEvent event) {
+  public void handleRefreshButton() {
     this.model.retrieveEmails();
   }
 
   @FXML
-  public void handleNewMailButton(ActionEvent event) {
+  public void handleNewMailButton() {
     try {
       FXMLLoader loader = new FXMLLoader();
       loader.setLocation(getClass().getResource("res/new_email_scene.fxml"));
@@ -75,7 +75,7 @@ public class MainSceneController {
     this.model.removeListenerToConnectionStatus(this.connectionDownListener);
   }
 
-  private void initListView(ListView lv_emails, Pane controller) {
+  private void initListView(ListView lv_emails) {
     lv_emails.setItems(this.model.getEmailReceived());
 
     lv_emails.setCellFactory(new Callback<ListView<Email>, ListCell<Email>>() {
@@ -112,11 +112,11 @@ public class MainSceneController {
 
           String cssValue;
           if (result) {
-            this.label_log.setText("Email set as unread");
-            cssValue = "-fx-background-color: " + ColorManager.successColor;
+            this.label_log.setText("Email set as read");
+            cssValue = LabelMessage.css_backgroundColor + ColorManager.successColor;
           } else {
-            this.label_log.setText("ERROR: impossible setting email as unread");
-            cssValue = "-fx-background-color: " + ColorManager.errorColor;
+            this.label_log.setText("ERROR: impossible setting email as read");
+            cssValue = LabelMessage.css_backgroundColor + ColorManager.errorColor;
           }
           this.label_log.setStyle(cssValue);
           removeLabelMessage(this.label_log, Duration.seconds(2));
@@ -126,12 +126,12 @@ public class MainSceneController {
   }
 
   @FXML
-  private void setEmailReceived (ActionEvent event) {
+  private void setEmailReceived () {
     this.lv_emails.setItems(this.model.getEmailReceived());
   }
 
   @FXML
-  private void setEmailSent (ActionEvent event) {
+  private void setEmailSent () {
     this.lv_emails.setItems(this.model.getEmailsSent());
 
   }

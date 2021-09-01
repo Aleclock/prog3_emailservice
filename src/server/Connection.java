@@ -1,10 +1,6 @@
 package server;
 
-import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import lib.*;
-
 import java.io.*;
 import java.net.Socket;
 
@@ -96,10 +92,6 @@ public class Connection implements Runnable{
     }
   }
 
-  public boolean isClosed() {
-    return this.closed;
-  }
-
   public void closeConnection() {
     if (!closed) {
       try {
@@ -120,19 +112,18 @@ public class Connection implements Runnable{
 
   private void loginUser(User user) throws IOException {
     if (!closed) {
-      OperationResponse<Boolean, String>  result = this.model.loginUser(user);
-      outputStream.writeObject(result.getFirst());
-      ps.println(user.getUserName() + " " + result.getSecond());
-      if (result.getFirst()) {
-        this.model.addUser(user);
+      OperationResponse result = this.model.loginUser(user);
+      outputStream.writeObject(result);
+      ps.println(user.getUserName() + " " + result.getMessage());
+      if (result.getResult()) {
         this.user = user;
-        this.model.getOrCreateEmailBox(user);
       } else {
         closeConnection();
       }
     }
   }
 
+  // TODO forse devo ritornare un valore di conferma
   private void freeUser() {
     if (!closed) {
       this.model.freeUser(this.user);
@@ -142,38 +133,43 @@ public class Connection implements Runnable{
 
   private void readEmails() throws IOException{
     if (!closed) {
-      EmailBox emailBox = model.getEmailBox(this.user);
-      if (emailBox != null) {
+      OperationResponse result = model.getEmailBox(this.user);
+      if (result.getResult()) {
         this.ps.println(user.getUserName() + ": " + LabelMessage.server_readEmails_success);
+        result.setMessage(LabelMessage.server_readEmails_success);
       } else {
         this.ps.println(user.getUserName() + ": " + LabelMessage.server_readEmails_error);
+        result.setMessage(LabelMessage.server_readEmails_error);
       }
-      this.outputStream.writeObject(emailBox);
+      this.outputStream.writeObject(result);
     }
   }
 
   private void sendEmail(Email email) throws IOException{
     if (!closed) {
-      OperationResponse<Boolean, String> result = this.model.sendEmail(email);
-      this.outputStream.writeObject(result.getFirst());
-      this.ps.println(this.user.getUserName() + " : " + result.getSecond());
+      OperationResponse result = this.model.sendEmail(email);
+      this.outputStream.writeObject(result);
+      this.ps.println(this.user.getUserName() + " : " + result.getMessage());
     }
   }
 
   private void setEmailRead (Email email, User user, boolean read) throws IOException{
     if (!closed) {
-      OperationResponse<Boolean, String> result = this.model.setEmailRead(user, email, read);
-      this.outputStream.writeObject(result.getFirst());
-      this.ps.println(result.getSecond());
+      OperationResponse result = this.model.setEmailRead(user, email, read);
+      this.outputStream.writeObject(result);
+      this.ps.println(result.getMessage());
     }
   }
 
-  // TODO valutare di inviare al client non solo il valore booleano ma OperationResponse
   private void deleteEmail (Email email, User user) throws IOException{
     if (!closed) {
-      OperationResponse<Boolean, String> result = this.model.deleteEmail(user, email);
-      this.outputStream.writeObject(result.getFirst());
-      this.ps.println(result.getSecond());
+      OperationResponse result = this.model.deleteEmail(user, email);
+      this.outputStream.writeObject(result);
+      this.ps.println(result.getMessage());
     }
+  }
+
+  public boolean isClosed() {
+    return this.closed;
   }
 }

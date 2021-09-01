@@ -5,10 +5,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lib.Email;
-import lib.EmailProperty;
-import lib.LabelMessage;
-import lib.User;
+import lib.*;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -17,12 +14,12 @@ import java.util.stream.Collectors;
 import static java.lang.Thread.sleep;
 
 public class Model {
-  private Connection connection;
+  private final Connection connection;
   private User user;
   private final ObservableList<Email> emails;
   private final ObservableList<Email> emailsSent;
   private final ObservableList<Email> emailReceived;
-  private SimpleObjectProperty<EmailProperty> currentEmailSelected = new SimpleObjectProperty<>(null);
+  private final SimpleObjectProperty<EmailProperty> currentEmailSelected = new SimpleObjectProperty<>(null);
 
 
   public Model() {
@@ -76,14 +73,16 @@ public class Model {
   }
 
   public String requestSendMail(List<User> recipientsList, String subject, String body) throws IOException {
-    String message = "";
+    String message;
     if (recipientsList.isEmpty()) {
       message = LabelMessage.client_sendEmail_noRecipient_error;
     } else {
       connectUser();
       Email email = new Email(this.user, recipientsList, subject, body);
-      message = this.connection.sendEmail(email);
-      if (message.contains("successfully")) {
+      OperationResponse result = this.connection.sendEmail(email);
+      message = result.getMessage();
+      if (result.getResult()) {
+        email = result.getEmail();
         email.setRead(true);
         this.emails.add(0, email);
         this.emailsSent.add(0, email);
@@ -94,15 +93,14 @@ public class Model {
     return message;
   }
 
-  // TODO cambiare modo per verificare il successo di un operazione: usare true/false
-  public String requestDeleteEmail (long uuid) throws IOException {
-    String message = "";
+  public OperationResponse requestDeleteEmail (long uuid) throws IOException {
+    OperationResponse result = new OperationResponse(false, "");
 
     connectUser();
     Email email = getEmailByUUID(uuid);
     if (email != null) {
-      message = this.connection.deleteEmail(email);
-      if (message.contains("successfully")) {
+      result = this.connection.deleteEmail(email);
+      if (result.getResult()) {
         List<Email> emailToRemove = new ArrayList<>();
         emailToRemove.add(email);
         removeClientEmail (emailToRemove, this.emails);
@@ -117,12 +115,13 @@ public class Model {
     }
 
     closeConnection();
-    return message;
+    return result;
   }
 
-  // TODO dovrei prevenire errori
   private void removeClientEmail (List<Email> email, ObservableList<Email> emailList) {
-    emailList.removeAll(email);
+    if (emailList != null && email != null) {
+      emailList.removeAll(email);
+    }
   }
 
   /*
@@ -202,7 +201,6 @@ public class Model {
     if (this.emails != null) {
       List<Email> selectedEmail = this.emails.stream().filter(e -> e.getUuid() == id).collect(Collectors.toList());
       if (!selectedEmail.isEmpty()) {
-        // TODO potrebbero esserci più mail con lo stesso id
         retrievedEmail = selectedEmail.get(0);
       }
     }
