@@ -37,7 +37,7 @@ public class Connection implements Runnable{
       if (!closed) {
         try {
           if ((o = inputStream.readObject()) != null) {
-            if ( o instanceof Command) {
+            if (o.getClass() == Command.class) {
               Command command = (Command) o;
               setUser(command.getUser());
               handleCall(command);

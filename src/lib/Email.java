@@ -110,7 +110,7 @@ public class Email implements Serializable {
   @Override
   public boolean equals(Object obj) {
     boolean areEqual = false;
-    if (obj instanceof Email) {
+    if (obj.getClass() == Email.class) {
       Email email = (Email) obj;
       if (email.uuid == this.uuid) {
         areEqual = true;

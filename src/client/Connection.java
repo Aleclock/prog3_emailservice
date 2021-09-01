@@ -83,7 +83,7 @@ public class Connection {
       try {
         this.outputStream.writeObject(new Command(new User(email), "login", null));
         Object o = this.inputStream.readObject();
-        if (o instanceof Boolean) {
+        if (o.getClass() == Boolean.class) {
           return (boolean) o;
         }
       } catch (IOException | ClassNotFoundException e) {
@@ -104,7 +104,7 @@ public class Connection {
          */
         this.outputStream.writeObject(new Command(this.user, "read_emails", null));
         Object o = this.inputStream.readObject();
-        if (o instanceof EmailBox) {
+        if (o.getClass() == EmailBox.class) {
           EmailBox emailBox = (EmailBox) o;
           emails = emailBox.getEmailList();
         } else {
@@ -124,7 +124,7 @@ public class Connection {
         Command command = new Command(this.user, "send_email", email);
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
-        if (o instanceof Boolean) {
+        if (o.getClass() == Boolean.class) {
           if ((Boolean) o) {
             message = LabelMessage.emailSentSuccess;
           } else {
@@ -145,7 +145,7 @@ public class Connection {
         Command command = new Command(this.user, "delete_email", email);
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
-        if (o instanceof Boolean) {
+        if (o.getClass() == Boolean.class) {
           if ((Boolean) o) {
             message = LabelMessage.emailDeleteSuccess;
           } else {
@@ -172,7 +172,7 @@ public class Connection {
         Command command = new Command(this.user, code, email);
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
-        if (o instanceof Boolean) {
+        if (o.getClass() == Boolean.class) {
           result = (Boolean) o;
         }
       } catch (IOException | ClassNotFoundException e) {
