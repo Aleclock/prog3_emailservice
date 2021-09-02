@@ -1,7 +1,6 @@
 package client;
 
 import javafx.animation.PauseTransition;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,7 +20,7 @@ public class MainSceneController {
   private ConnectionDownListener<Boolean> connectionDownListener;
 
   @FXML
-  private Button refresh;
+  private Button refresh, btn_emailReceived, btn_emailSent;
   @FXML
   private ListView lv_emails;
   @FXML
@@ -128,20 +127,25 @@ public class MainSceneController {
   @FXML
   private void setEmailReceived () {
     this.lv_emails.setItems(this.model.getEmailReceived());
+    this.btn_emailReceived.setStyle(LabelMessage.css_buttonSelected);
+    this.btn_emailSent.setStyle(LabelMessage.css_buttonNoSelected);
   }
 
   @FXML
   private void setEmailSent () {
     this.lv_emails.setItems(this.model.getEmailsSent());
-
+    this.btn_emailSent.setStyle(LabelMessage.css_buttonSelected);
+    this.btn_emailReceived.setStyle(LabelMessage.css_buttonNoSelected);
   }
 
+  /**
+   * https://stackoverflow.com/questions/30759310/how-to-reset-back-to-default-css-after-adding-style
+   */
   private void removeLabelMessage(Label label, Duration d) {
     PauseTransition delayLog = new PauseTransition(d);
-    final String css = LabelMessage.css_backgroundColor + ColorManager.defaultColor;
     delayLog.setOnFinished(e -> {
       label.setText("");
-      label.setStyle(css);
+      label.setStyle(null);
     });
     delayLog.play();
   }

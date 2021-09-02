@@ -3,6 +3,8 @@ package lib;
 public class LabelMessage {
 
   public static String css_backgroundColor = "-fx-background-color: ";
+  public static String css_buttonSelected = "-fx-background-color: #CECBCA; -fx-border-color: #CECBCA; -fx-border-radius: 7; -fx-background-radius: 7; -fx-border-width: 1;";
+  public static String css_buttonNoSelected = "-fx-background-color: none;";
 
   public static String operationSuccess = "Operazione riuscita";
   public static String operationFailed = "Operazione fallita";

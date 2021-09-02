@@ -122,8 +122,7 @@ public class Connection implements Runnable{
       }
     }
   }
-
-  // TODO forse devo ritornare un valore di conferma
+  
   private void freeUser() {
     if (!closed) {
       this.model.freeUser(this.user);

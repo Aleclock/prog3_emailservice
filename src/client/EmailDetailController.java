@@ -142,10 +142,9 @@ public class EmailDetailController {
 
   private void removeLabelMessage(Label label, Duration d) {
     PauseTransition delayLog = new PauseTransition(d);
-    final String css = LabelMessage.css_backgroundColor + ColorManager.defaultColor;
     delayLog.setOnFinished(e -> {
       label.setText("");
-      label.setStyle(css);
+      label.setStyle(null);
     });
     delayLog.play();
   }

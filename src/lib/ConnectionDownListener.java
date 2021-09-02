@@ -17,10 +17,10 @@ public class ConnectionDownListener<B extends Boolean> implements ChangeListener
     String message;
     if (isDown) {
       message = LabelMessage.serverDown;
-      cssValue = "-fx-background-color: " + ColorManager.errorColor;
+      cssValue = LabelMessage.css_backgroundColor + ColorManager.errorColor;
     } else {
       message = LabelMessage.serverWorking;
-      cssValue = "-fx-background-color: " + ColorManager.successColor;
+      cssValue = LabelMessage.css_backgroundColor + ColorManager.successColor;
       removeLabelMessage(this.label_log, Duration.seconds(2));
     }
 
@@ -34,10 +34,9 @@ public class ConnectionDownListener<B extends Boolean> implements ChangeListener
 
   private void removeLabelMessage(Label label, Duration d) {
     PauseTransition delayLog = new PauseTransition(d);
-    final String css = LabelMessage.css_backgroundColor + ColorManager.defaultColor;
     delayLog.setOnFinished(e -> {
       label.setText("");
-      label.setStyle(css);
+      label.setStyle(null);
     });
     delayLog.play();
   }

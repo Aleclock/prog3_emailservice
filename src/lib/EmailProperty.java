@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-// TODO qui ho fatto un po' di casino per inserire l'uuid, vedere se funziona con i vari cast
 public class EmailProperty {
   private final StringProperty recipients = new SimpleStringProperty();
   private final StringProperty uuid = new SimpleStringProperty();
@@ -22,7 +21,6 @@ public class EmailProperty {
     setUuid(email.getUuid());
     setSubject(email.getSubject());
     setSender(email.getSender().getUserName());
-    //setDate(email.getDateSent().toString());
     setDate(getFormattedDate(email.getDateSent()));
     setBody(email.getBody());
   }

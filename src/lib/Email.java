@@ -8,8 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO https://stackoverflow.com/questions/18791566/notserializableexception-on-simplelistproperty
-
+/**
+ *  https://stackoverflow.com/questions/18791566/notserializableexception-on-simplelistproperty
+ */
 public class Email implements Serializable {
   private long uuid;
   private User sender;

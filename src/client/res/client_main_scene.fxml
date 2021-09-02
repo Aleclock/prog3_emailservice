@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -16,7 +17,8 @@
    <top>
       <AnchorPane prefHeight="46.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutX="83.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleNewMailButton">
+            <Button fx:id="refresh" layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleRefreshButton" text="Refresh" />
+            <Button layoutX="83.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleNewMailButton">
                <graphic>
                   <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -25,17 +27,21 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="refresh" layoutX="14.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleRefreshButton" text="Refresh" />
-            <Separator layoutX="13.0" layoutY="56.0" prefHeight="0.0" prefWidth="574.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" />
-            <Label alignment="TOP_CENTER" text="Label" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0" />
+            <Separator layoutX="17.0" layoutY="45.0" prefHeight="0.0" prefWidth="574.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="9.0" />
          </children>
       </AnchorPane>
    </top>
    <left>
       <VBox prefHeight="307.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#setEmailReceived" prefHeight="27.0" prefWidth="106.0" style="-fx-background-color: none;" text="Ricevute" textAlignment="CENTER" />
-            <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#setEmailSent" prefHeight="27.0" prefWidth="111.0" style="-fx-background-color: none;" text="Inviate" />
+            <Button fx:id="btn_emailReceived" alignment="TOP_LEFT" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#setEmailReceived" prefHeight="27.0" prefWidth="80.0" style="-fx-background-color: #CECBCA; -fx-border-color: #CECBCA; -fx-border-radius: 7; -fx-background-radius: 7; -fx-border-width: 1;" text="Received" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" top="10.0" />
+               </VBox.margin></Button>
+            <Button fx:id="btn_emailSent" alignment="TOP_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#setEmailSent" prefHeight="27.0" prefWidth="0.0" style="-fx-background-color: none;" text="Sent" textAlignment="RIGHT">
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin></Button>
          </children>
       </VBox>
    </left>
