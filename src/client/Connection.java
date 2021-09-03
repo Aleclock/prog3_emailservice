@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Connection {
@@ -34,11 +35,11 @@ public class Connection {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.isConnected = true;
-        this.connectionStatus.setValue(true);
+        setConnectionStatus(true);
       }
     } catch (IOException e){
       this.isConnected = false;
-      this.connectionStatus.setValue(false);
+      setConnectionStatus(false);
     }
   }
 
@@ -61,7 +62,7 @@ public class Connection {
    * Logout
    */
   public void logout() {
-    if (this.outputStream != null) {
+    if (isConnected()) {
       try {
         this.outputStream.writeObject(new Command(this.user, "logout", null));
         this.outputStream.close();
@@ -77,19 +78,20 @@ public class Connection {
   /**
    * Send to server User object and retrieve true/false if user's mail exists or not
    */
-  public boolean login(String email){
-    if (this.outputStream != null) {
+  public OperationResponse login(String email){
+    OperationResponse result = new OperationResponse(false, "");
+    if (isConnected()) {
       try {
         this.outputStream.writeObject(new Command(new User(email), "login", null));
         Object o = this.inputStream.readObject();
         if (o.getClass() == OperationResponse.class) {
-          return ((OperationResponse) o).getResult();
+          return (OperationResponse) o;
         }
       } catch (IOException | ClassNotFoundException e) {
         e.printStackTrace();
       }
     }
-    return false;
+    return result;
   }
 
   /**
@@ -97,26 +99,27 @@ public class Connection {
    * poi l'azione da compiere, forse ha più senso inviare una coppia <User, String> dove String è l'azione da compiere
    * quindi login, closeConnection, readEmails. in questo modo non è necessario inviare troppe cose
    */
-  public List<Email> getEmails() {
-    List<Email> emails = null;
-    if (this.outputStream != null) {
+  public OperationResponse getEmails() {
+    OperationResponse result = new OperationResponse(false, "");
+    if (isConnected()) {
       try {
         this.outputStream.writeObject(new Command(this.user, "read_emails", null));
         Object o = this.inputStream.readObject();
         if (o.getClass() == OperationResponse.class) {
-          EmailBox emailBox = ((OperationResponse) o).getEmailBox();
-          emails = emailBox.getEmailList();
+          result = (OperationResponse) o;
+          //EmailBox emailBox = ((OperationResponse) o).getEmailBox();
+          //emails = emailBox.getEmailList();
         }
       } catch (IOException | ClassNotFoundException e) {
         e.printStackTrace();
       }
     }
-    return emails;
+    return result;
   }
 
   public OperationResponse sendEmail(Email email) {
     OperationResponse result = new OperationResponse(false, "");
-    if (this.outputStream != null) {
+    if (isConnected()) {
       try {
         Command command = new Command(this.user, "send_email", email);
         this.outputStream.writeObject(command);
@@ -140,7 +143,7 @@ public class Connection {
 
   public OperationResponse deleteEmail (Email email) {
     OperationResponse result = new OperationResponse(false, "");
-    if (this.outputStream != null) {
+    if (isConnected()) {
       try {
         Command command = new Command(this.user, "delete_email", email);
         this.outputStream.writeObject(command);
@@ -161,9 +164,9 @@ public class Connection {
     return result;
   }
 
-  public boolean setRead(Email email, boolean read) {
-    boolean result = false;
-    if (this.outputStream != null) {
+  public OperationResponse setRead(Email email, boolean read) {
+    OperationResponse result = new OperationResponse(false, "");
+    if (isConnected()) {
       try {
         String code;
         if (read) {
@@ -175,7 +178,7 @@ public class Connection {
         this.outputStream.writeObject(command);
         Object o = inputStream.readObject();
         if (o.getClass() == OperationResponse.class) {
-          result = ((OperationResponse) o).getResult();
+          result = (OperationResponse) o;
         }
       } catch (IOException | ClassNotFoundException e) {
         e.printStackTrace();
@@ -192,7 +195,6 @@ public class Connection {
     return this.connectionStatus;
   }
 
-  // TODO ha senso usarlo per qualche operazione?
   public void setConnectionStatus(boolean value) {
     this.connectionStatus.setValue(value);
   }

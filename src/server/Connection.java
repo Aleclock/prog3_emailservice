@@ -122,7 +122,7 @@ public class Connection implements Runnable{
       }
     }
   }
-  
+
   private void freeUser() {
     if (!closed) {
       this.model.freeUser(this.user);

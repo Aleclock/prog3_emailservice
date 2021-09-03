@@ -111,10 +111,10 @@ public class MainSceneController {
 
           String cssValue;
           if (result) {
-            this.label_log.setText("Email set as read");
+            this.label_log.setText(LabelMessage.client_emailSetRead_success);
             cssValue = LabelMessage.css_backgroundColor + ColorManager.successColor;
           } else {
-            this.label_log.setText("ERROR: impossible setting email as read");
+            this.label_log.setText(LabelMessage.client_emailSetRead_error);
             cssValue = LabelMessage.css_backgroundColor + ColorManager.errorColor;
           }
           this.label_log.setStyle(cssValue);

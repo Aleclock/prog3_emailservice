@@ -18,7 +18,7 @@
       <AnchorPane prefHeight="46.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="refresh" layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleRefreshButton" text="Refresh" />
-            <Button layoutX="83.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleNewMailButton">
+            <Button layoutX="77.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleNewMailButton">
                <graphic>
                   <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>

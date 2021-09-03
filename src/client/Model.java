@@ -21,7 +21,6 @@ public class Model {
   private final ObservableList<Email> emailReceived;
   private final SimpleObjectProperty<EmailProperty> currentEmailSelected = new SimpleObjectProperty<>(null);
 
-
   public Model() {
     this.connection = new Connection();
     this.emails = FXCollections.observableList(new ArrayList<>());
@@ -37,11 +36,9 @@ public class Model {
     this.connection.getConnectionStatus().removeListener(cl);
   }
 
-  synchronized public void connectUser() throws SocketException {
+  synchronized public boolean connectUser() {
     this.connection.connect();
-    if (!this.connection.isConnected()) {
-      throw new SocketException("Impossibile raggiungere il server");
-    }
+    return this.connection.getConnectionStatus().get();
   }
 
   synchronized public void closeConnection() throws SocketException {
@@ -72,25 +69,30 @@ public class Model {
     emailRefreshThread.start();
   }
 
-  public String requestSendMail(List<User> recipientsList, String subject, String body) throws IOException {
-    String message;
+  public OperationResponse requestSendMail(List<User> recipientsList, String subject, String body) throws IOException {
+    OperationResponse result = new OperationResponse(false, "");
     if (recipientsList.isEmpty()) {
-      message = LabelMessage.client_sendEmail_noRecipient_error;
+      result.setMessage(LabelMessage.client_sendEmail_noRecipient_error);
     } else {
-      connectUser();
-      Email email = new Email(this.user, recipientsList, subject, body);
-      OperationResponse result = this.connection.sendEmail(email);
-      message = result.getMessage();
-      if (result.getResult()) {
-        email = result.getEmail();
-        email.setRead(true);
-        this.emails.add(0, email);
-        this.emailsSent.add(0, email);
+      boolean connectionResult = connectUser();
+      if (!connectionResult)
+          result.setMessage(LabelMessage.serverDown);
+      else {
+        Email email = new Email(this.user, recipientsList, subject, body);
+        result = this.connection.sendEmail(email);
+        if (result.getResult()) {
+          email = result.getEmail();
+          email.setRead(true);
+          result.setMessage(LabelMessage.client_sendEmail_success);
+          this.emails.add(0, email);
+          this.emailsSent.add(0, email);
+        } else
+          result.setMessage(LabelMessage.client_sendEmail_error);
       }
 
       closeConnection();
     }
-    return message;
+    return result;
   }
 
   public OperationResponse requestDeleteEmail (long uuid) throws IOException {
@@ -129,22 +131,24 @@ public class Model {
   il metodo è disponibile, il primo thread può accedere, mentre se è occupato il thread viene messo in coda fino a quando
   non è disponibile
    */
-  // TODO dovrei ritornare un result
   synchronized public void retrieveEmails() {
     try {
       connectUser();
-      List<Email> newEmail = this.connection.getEmails();
+      OperationResponse result = this.connection.getEmails();
+      List<Email> newEmail = result.getEmailBox().getEmailList();
 
-      if (this.emailsSent.isEmpty()) {
-        List<Email> send = newEmail.stream().filter(e -> e.getSender().equals(this.user)).collect(Collectors.toList());
-        this.emailsSent.addAll(send);
-      }
+      if (newEmail != null) {
+        if (this.emailsSent.isEmpty()) {
+          List<Email> send = newEmail.stream().filter(e -> e.getSender().equals(this.user)).collect(Collectors.toList());
+          this.emailsSent.addAll(send);
+        }
 
-      if (!newEmail.isEmpty()) {
-        List<Email> received = newEmail.stream().filter (e -> e.recipientsAsString().contains(this.user.getUserName())).distinct().collect(Collectors.toList());
+        if (!newEmail.isEmpty()) {
+          List<Email> received = newEmail.stream().filter(e -> e.recipientsAsString().contains(this.user.getUserName())).distinct().collect(Collectors.toList());
 
-        updateLists(received, this.emailReceived);
-        updateLists(newEmail, this.emails);
+          updateLists(received, this.emailReceived);
+          updateLists(newEmail, this.emails);
+        }
       }
 
       closeConnection();
@@ -155,12 +159,8 @@ public class Model {
 
   public void logout() {
     if (this.user != null) {
-      try {
-        connectUser();
-        this.connection.logout();
-      } catch (SocketException e) {
-        e.printStackTrace();
-      }
+      connectUser();
+      this.connection.logout();
     }
   }
 
@@ -178,7 +178,7 @@ public class Model {
     boolean result = false;
     try {
       connectUser();
-      result = connection.setRead(email, read);
+      result = connection.setRead(email, read).getResult();
       if (result) {
         getEmailByUuid(this.emails, email.getUuid()).setRead(read);
 
@@ -242,8 +242,7 @@ public class Model {
     return this.emailReceived;
   }
 
-  // String... stringUtenti
-  // in questo modo sarebbe possibile passare una o più stringhe, non so se possa servire
+  // String... stringUtenti -- in questo modo sarebbe possibile passare una o più stringhe, non so se possa servire
   public List<User> stringToUserList(String string) {
     List<User> userList = new ArrayList<>();
     String[] userNames = string.split("\\s+");

@@ -25,7 +25,11 @@ public class LabelMessage {
 
   public static String client_sendEmail_emailNotValid_error = "Recipient's email not valid";
   public static String client_sendEmail_noRecipient_error = "Errore: inserire almeno un destinatario";
+  public static String client_sendEmail_success = "Email sent successfully.";
+  public static String client_sendEmail_error = "ERROR: sending email failed";
 
+  public static String client_emailSetRead_success = "Email set as read";
+  public static String client_emailSetRead_error = "ERROR: impossible setting email as read";
   public static String client_emailSetUnread_success = "Email set as unread";
   public static String client_emailSetUnread_error = "ERROR: impossible setting email as unread";
 
@@ -54,11 +58,13 @@ public class LabelMessage {
   public static String server_readEmails_success = "lettura della casella email andata a buon fine.";
   public static String server_readEmails_error = "lettura della casella email fallita";
   public static String server_sendEmail_success = "email sent successfully.";
-  public static String server_sendEmail_error = "sending mail failed";
+  public static String server_sendEmail_error = "sending email failed";
   public static String server_sendEmail_userNotExist = "not exist: Sending mail failed\n";
   public static String server_deleteEmail_success = "successfully deleted";
   public static String server_deleteEmail_error = "ERROR while deleting email";
   public static String server_getOrCreateEmailBox_success = "Email box retrieved correctly";
   public static String server_getOrCreateEmailBox_error = "ERROR: Email box not retrieved correctly";
 
+  public static String server_errorEmail_subject = "Undelivered Mail Returned to Sender";
+  public static String server_errorEmail_body = "This is a system-generated message to inform you that your email could not be delivered to following recipients. Details of the email and the error are as follows:\n";
 }

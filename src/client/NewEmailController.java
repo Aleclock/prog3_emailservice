@@ -1,13 +1,13 @@
 package client;
 
 import javafx.animation.PauseTransition;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import lib.ColorManager;
 import lib.LabelMessage;
+import lib.OperationResponse;
 import lib.User;
 import java.io.IOException;
 import java.util.List;
@@ -50,7 +50,7 @@ public class NewEmailController {
   }
 
   @FXML
-  public void handleSendEmail(ActionEvent event) {
+  public void handleSendEmail() {
     String body = this.ta_body.getText();
     String recipients = this.tf_recipients.getText();
     String subject = this.tf_subject.getText();
@@ -68,9 +68,9 @@ public class NewEmailController {
       }
 
       if (correct) {
-        String message = this.model.requestSendMail(recipientsUser, subject, body);
+        OperationResponse result = this.model.requestSendMail(recipientsUser, subject, body);
         String cssValue;
-        if (message.contains("successfully")) {
+        if (result.getResult()) {
           cssValue = LabelMessage.css_backgroundColor + ColorManager.successColor;
 
           PauseTransition delay = new PauseTransition(Duration.seconds(2));
@@ -79,17 +79,20 @@ public class NewEmailController {
         } else {
           cssValue = LabelMessage.css_backgroundColor + ColorManager.errorColor;
         }
+
         this.label_email_status.setStyle(cssValue);
-        this.label_email_status.setText(message);
+        this.label_email_status.setText(result.getMessage());
       } else {
         String cssValue = LabelMessage.css_backgroundColor + ColorManager.errorColor;
         this.label_email_status.setStyle(cssValue);
         this.label_email_status.setText(LabelMessage.client_sendEmail_emailNotValid_error);
-      }
+    }
 
       removeLabelMessage();
     } catch(IOException e) {
-      // TODO gestire errori e messaggi
+      String cssValue = LabelMessage.css_backgroundColor + ColorManager.errorColor;
+      this.label_email_status.setStyle(cssValue);
+      this.label_email_status.setText(LabelMessage.operationFailed + ": " + e.getMessage());
     }
   }
 

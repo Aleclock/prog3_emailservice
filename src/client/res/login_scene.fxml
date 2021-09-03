@@ -20,5 +20,6 @@
             <Font size="30.0" />
          </font>
       </Label>
+      <Label fx:id="label_log" alignment="CENTER" layoutY="383.0" maxHeight="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" />
    </children>
 </AnchorPane>

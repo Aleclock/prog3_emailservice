@@ -94,6 +94,14 @@ public class Email implements Serializable {
     return formatter.format(this.dateSent);
   }
 
+  public String getRecipientsAsList() {
+    StringBuilder s = new StringBuilder();
+    for (User r : this.recipients) {
+      s.append(" ").append(r.getUserName());
+    }
+    return s.toString();
+  }
+
   @Override
   public String toString() {
     return "Email{" +

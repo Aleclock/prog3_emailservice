@@ -159,14 +159,16 @@ public class Model {
 
   private Email createErrorEmail(Email email, User userNonExistent) {
     User systemUser = new User ("Mail Delivery System");
-    String bodyMessage = "This is a system-generated message to inform you that your email could not be delivered to following" +
-            "recipients. Details of the email and the error are as follows:\n" +
+    String bodyMessage = LabelMessage.server_errorEmail_body +
             userNonExistent.getUserName() + " not exist.\n\n" +
             "EMAIL INFO:\n" +
+            "Recipients: " + email.getRecipientsAsList() + "\n" +
             "Subject: " + email.getSubject() + "\n" +
             "Date sent: " + email.getDateSent() + "\n" +
             "Body: " + email.getBody();
-    return new Email(systemUser, email.getSender(), "Undelivered Mail Returned to Sender", bodyMessage);
+    Email ee = new Email(systemUser, email.getSender(), LabelMessage.server_errorEmail_subject, bodyMessage);
+    ee.setUUID(this.uuidGenerator.generateUUID());
+    return ee;
   }
 
   private boolean addEmailToEmailBox(User user, EmailBox emailBox, Email email) {
