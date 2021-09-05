@@ -21,7 +21,6 @@ public class UUIDGenerator {
       Scanner scanner = new Scanner(file);
       while(scanner.hasNextLine()) {
         Long fileUUID = Long.parseLong(scanner.nextLine());
-        System.out.println(fileUUID);
         this.currentUUID.set(fileUUID);
       }
     } catch (FileNotFoundException e) {

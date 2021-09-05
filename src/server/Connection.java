@@ -71,16 +71,16 @@ public class Connection implements Runnable{
             readEmails();
             break;
           case "send_email":
-            sendEmail(command.getEmails());
+            sendEmail(command.getEmail());
             break;
           case "set_email_read":
-            setEmailRead(command.getEmails(), command.getUser(), true);
+            setEmailRead(command.getEmail(), command.getUser(), true);
             break;
           case "set_email_unread":
-            setEmailRead(command.getEmails(), command.getUser(), false);
+            setEmailRead(command.getEmail(), command.getUser(), false);
             break;
           case "delete_email":
-            deleteEmail(command.getEmails(), command.getUser());
+            deleteEmail(command.getEmail(), command.getUser());
             break;
           default:
             break;

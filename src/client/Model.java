@@ -131,30 +131,36 @@ public class Model {
   il metodo è disponibile, il primo thread può accedere, mentre se è occupato il thread viene messo in coda fino a quando
   non è disponibile
    */
-  synchronized public void retrieveEmails() {
+  synchronized public OperationResponse retrieveEmails() {
+    OperationResponse result = new OperationResponse(false, "");
     try {
-      connectUser();
-      OperationResponse result = this.connection.getEmails();
-      List<Email> newEmail = result.getEmailBox().getEmailList();
+      if (connectUser()) {
+        result = this.connection.getEmails();
+        List<Email> newEmail = result.getEmailBox().getEmailList();
 
-      if (newEmail != null) {
-        if (this.emailsSent.isEmpty()) {
-          List<Email> send = newEmail.stream().filter(e -> e.getSender().equals(this.user)).collect(Collectors.toList());
-          this.emailsSent.addAll(send);
+        if (newEmail != null) {
+          if (this.emailsSent.isEmpty()) {
+            List<Email> send = newEmail.stream().filter(e -> e.getSender().equals(this.user)).collect(Collectors.toList());
+            this.emailsSent.addAll(send);
+          }
+
+          if (!newEmail.isEmpty()) {
+            List<Email> received = newEmail.stream().filter(e -> e.recipientsAsString().contains(this.user.getUserName())).distinct().collect(Collectors.toList());
+
+            updateLists(received, this.emailReceived);
+            updateLists(newEmail, this.emails);
+          }
         }
 
-        if (!newEmail.isEmpty()) {
-          List<Email> received = newEmail.stream().filter(e -> e.recipientsAsString().contains(this.user.getUserName())).distinct().collect(Collectors.toList());
-
-          updateLists(received, this.emailReceived);
-          updateLists(newEmail, this.emails);
-        }
+        closeConnection();
+      } else {
+        result.setMessage(LabelMessage.serverDown);
       }
-
-      closeConnection();
     } catch (SocketException e) {
       e.printStackTrace();
     }
+
+    return result;
   }
 
   public void logout() {

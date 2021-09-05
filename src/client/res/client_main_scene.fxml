@@ -5,8 +5,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -18,15 +16,7 @@
       <AnchorPane prefHeight="46.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="refresh" layoutX="14.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleRefreshButton" text="Refresh" />
-            <Button layoutX="77.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleNewMailButton">
-               <graphic>
-                  <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@icon_new_email.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+            <Button layoutX="77.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleNewMailButton" text="New Email" />
             <Separator layoutX="17.0" layoutY="45.0" prefHeight="0.0" prefWidth="574.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="9.0" />
          </children>
       </AnchorPane>

@@ -1,17 +1,16 @@
 package lib;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class Command implements Serializable {
-  private User user;
-  private String commandKey;
-  private Email emails;
+  private final User user;
+  private final String commandKey;
+  private final Email email;
 
-  public Command (User user, String command, Email emails) {
+  public Command (User user, String command, Email email) {
     this.user = user;
     this.commandKey = command;
-    this.emails = emails;
+    this.email = email;
   }
 
   public String getCommandKey() {
@@ -22,7 +21,7 @@ public class Command implements Serializable {
     return this.user;
   }
 
-  public Email getEmails() {
-    return this.emails;
+  public Email getEmail() {
+    return this.email;
   }
 }

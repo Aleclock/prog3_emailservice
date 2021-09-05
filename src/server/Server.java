@@ -1,6 +1,5 @@
 package server;
 
-import javafx.beans.property.SimpleStringProperty;
 import lib.LabelMessage;
 import java.io.*;
 import java.net.ServerSocket;
@@ -41,7 +40,7 @@ public class Server extends Thread{
       while (!stop) {
         try {
           Socket client = serverSocket.accept();
-          Connection connection = new Connection(model, client, ps);
+          Connection connection = new Connection(this.model, client, this.ps);
           executorService.execute(connection);
           ps.println(LabelMessage.startedNewProcess);
         } catch(SocketTimeoutException ex){

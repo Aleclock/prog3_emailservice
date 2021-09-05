@@ -8,8 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Connection {
   private Socket socket;
@@ -80,7 +78,7 @@ public class Connection {
    */
   public OperationResponse login(String email){
     OperationResponse result = new OperationResponse(false, "");
-    if (isConnected()) {
+    if (isConnected() && this.outputStream != null) {
       try {
         this.outputStream.writeObject(new Command(new User(email), "login", null));
         Object o = this.inputStream.readObject();
@@ -142,7 +140,7 @@ public class Connection {
   }
 
   public OperationResponse deleteEmail (Email email) {
-    OperationResponse result = new OperationResponse(false, "");
+    OperationResponse result = new OperationResponse(false, LabelMessage.emailDeleteError);
     if (isConnected()) {
       try {
         Command command = new Command(this.user, "delete_email", email);

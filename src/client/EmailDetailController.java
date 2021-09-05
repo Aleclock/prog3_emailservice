@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import jdk.dynalink.Operation;
 import lib.ColorManager;
 import lib.EmailProperty;
 import lib.LabelMessage;
@@ -53,6 +52,7 @@ public class EmailDetailController {
     try {
       EmailProperty emailProperty = this.model.getCurrentEmailSelected().get();
       OperationResponse result = this.model.requestDeleteEmail(emailProperty.getUuid());
+      // TODO se fallisce il testo è ""
 
       String cssValue;
       if (result.getResult()) {

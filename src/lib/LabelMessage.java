@@ -6,11 +6,14 @@ public class LabelMessage {
   public static String css_buttonSelected = "-fx-background-color: #CECBCA; -fx-border-color: #CECBCA; -fx-border-radius: 7; -fx-background-radius: 7; -fx-border-width: 1;";
   public static String css_buttonNoSelected = "-fx-background-color: none;";
 
-  public static String operationSuccess = "Operazione riuscita";
-  public static String operationFailed = "Operazione fallita";
-  public static String serverUnreachableTitle = "Server non raggiungibile";
-  public static String serverUnreachableLabel = "Server non raggiungibile, riprova più tardi.";
-  public static String loginFailed = "Login fallito: inserire un indirizzo valido o riprovare più tardi.";
+  public static String operationSuccess = "Operation completed successfully";
+  public static String operationFailed = "Operation failed";
+  public static String serverUnreachableTitle = "Server unreachable";
+  public static String serverUnreachableLabel = "Server unreachable, try again later.";
+  public static String loginFailed = "Login failed: enter a valid address or try again later.";
+
+  public static String client_refreshEmail_success = "";
+  public static String client_refreshEmail_error = "ERROR: refreshing email";
 
   public static String emailSentSuccess = "Email successfully sent";
   public static String emailSentError = "Error: email not sent";
@@ -18,13 +21,13 @@ public class LabelMessage {
   public static String emailDeleteSuccess = "Email successfully deleted";
   public static String emailDeleteError = "Error: email not deleted";
 
-  public static String serverDown = "Server non raggiungibile, riprova più tardi.";
-  public static String serverWorking = "Server raggiungibile, puoi tornare ad usare il programma.";
+  public static String serverDown = "Server unreachable, try again later.";
+  public static String serverWorking = "Server reachable again, you can go back to using the program.";
 
-  public static String new_email_sceneLoading_error = "Errore nel caricamento di new_email_scene.fxml";
+  public static String new_email_sceneLoading_error = "Loading error of new_email_scene.fxml";
 
   public static String client_sendEmail_emailNotValid_error = "Recipient's email not valid";
-  public static String client_sendEmail_noRecipient_error = "Errore: inserire almeno un destinatario";
+  public static String client_sendEmail_noRecipient_error = "Error: please insert at least one recipient";
   public static String client_sendEmail_success = "Email sent successfully.";
   public static String client_sendEmail_error = "ERROR: sending email failed";
 
@@ -36,27 +39,27 @@ public class LabelMessage {
   // SERVER
 
   public static String error_invalidSocket = "ERROR: Invalid socket";
-  public static String serverClosingSocket = "Server: chiusura socket";
-  public static String serverClosingSocketError = "Server: errore nella chiusura della socket";
+  public static String serverClosingSocket = "Server: closing socket";
+  public static String serverClosingSocketError = "Server: error during closing the socket";
 
   public static String connectionClosed = "connection closed";
 
-  public static String serverOpen = "Server status: aperto";
-  public static String serverClosed = "Server status: chiuso";
-  public static String serverNotTermined = "Server: server ancora in esecuzione";
-  public static String retryClosingServer = "Server: nuovo tentativo di chiusura";
-  public static String suspendedRequestAcceptance = "Server: Sospesa accettazione di nuove richieste";
+  public static String serverOpen = "Server status: open";
+  public static String serverClosed = "Server status: closed";
+  public static String serverNotTermined = "Server: server still running";
+  public static String retryClosingServer = "Server: new closure attempt";
+  public static String suspendedRequestAcceptance = "Server: acceptance of new requests suspended";
 
   public static String socketTimout = "Server: socket timeout";
-  public static String startedNewProcess = "Server: avviato nuovo processo.";
+  public static String startedNewProcess = "Server: new process started.";
 
   public static String server_userLogin = "logged in";
   public static String server_userLogout = "logged out";
   public static String server_userLogin_noExist_error = "user not exist";
   public static String server_userLogin_alreadyLogged_error = "user already logged in";
 
-  public static String server_readEmails_success = "lettura della casella email andata a buon fine.";
-  public static String server_readEmails_error = "lettura della casella email fallita";
+  public static String server_readEmails_success = "reading email box operation completed successfully";
+  public static String server_readEmails_error = "reading email box operation failed";
   public static String server_sendEmail_success = "email sent successfully.";
   public static String server_sendEmail_error = "sending email failed";
   public static String server_sendEmail_userNotExist = "not exist: Sending mail failed\n";

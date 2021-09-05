@@ -41,7 +41,16 @@ public class MainSceneController {
 
   @FXML
   public void handleRefreshButton() {
-    this.model.retrieveEmails();
+    String cssValue;
+    OperationResponse result = this.model.retrieveEmails();
+    if (result.getResult()){
+      cssValue = LabelMessage.css_backgroundColor + ColorManager.successColor;
+    } else {
+      cssValue = LabelMessage.css_backgroundColor + ColorManager.errorColor;
+    }
+    this.label_log.setStyle(cssValue);
+    this.label_log.setText(result.getMessage());
+    removeLabelMessage(this.label_log, Duration.seconds(2));
   }
 
   @FXML
