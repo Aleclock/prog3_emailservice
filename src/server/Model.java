@@ -111,7 +111,6 @@ public class Model {
   public OperationResponse deleteEmail (User user, Email email) {
     OperationResponse result = new OperationResponse(false, "");
     OperationResponse emailBox_response = getEmailBox(user);
-    //EmailBox emailBox = getEmailBox(user);
 
     if (emailBox_response.getResult()) {
       List<Email> emails = emailBox_response.getEmailBox().getEmailList();
@@ -166,9 +165,9 @@ public class Model {
             "Subject: " + email.getSubject() + "\n" +
             "Date sent: " + email.getDateSent() + "\n" +
             "Body: " + email.getBody();
-    Email ee = new Email(systemUser, email.getSender(), LabelMessage.server_errorEmail_subject, bodyMessage);
-    ee.setUUID(this.uuidGenerator.generateUUID());
-    return ee;
+    Email errorEmail = new Email(systemUser, email.getSender(), LabelMessage.server_errorEmail_subject, bodyMessage);
+    errorEmail.setUUID(this.uuidGenerator.generateUUID());
+    return errorEmail;
   }
 
   private boolean addEmailToEmailBox(User user, EmailBox emailBox, Email email) {

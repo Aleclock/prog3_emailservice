@@ -8,7 +8,7 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Server extends Thread{
+public class Server extends Thread {
   private ServerSocket serverSocket;
   private ExecutorService executorService;
   final private PrintStream ps;

@@ -78,7 +78,7 @@ public class Connection {
    */
   public OperationResponse login(String email){
     OperationResponse result = new OperationResponse(false, "");
-    if (isConnected() && this.outputStream != null) {
+    if (isConnected()) {
       try {
         this.outputStream.writeObject(new Command(new User(email), "login", null));
         Object o = this.inputStream.readObject();

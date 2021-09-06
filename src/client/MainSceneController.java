@@ -93,6 +93,7 @@ public class MainSceneController {
         }
     });
 
+    // Add email detail scene
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("res/email_detail_scene.fxml"));
       Parent root = loader.load();

@@ -52,7 +52,6 @@ public class EmailDetailController {
     try {
       EmailProperty emailProperty = this.model.getCurrentEmailSelected().get();
       OperationResponse result = this.model.requestDeleteEmail(emailProperty.getUuid());
-      // TODO se fallisce il testo è ""
 
       String cssValue;
       if (result.getResult()) {

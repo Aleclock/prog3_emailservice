@@ -34,7 +34,6 @@ public class LoginController {
       this.label_log.setStyle(LabelMessage.css_backgroundColor + ColorManager.errorColor);
       removeLabelMessage(this.label_log, Duration.seconds(4));
     } else {
-
       if (this.model.matchesEmailFormat(tf_email.getText()) && connection.login(tf_email.getText()).getResult()) {
         try {
           this.model.setUser(new User(tf_email.getText()));

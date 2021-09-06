@@ -39,16 +39,6 @@ public class Email implements Serializable {
     this.read = false;
   }
 
-  public long setUuid() {
-    Long id = 0L;
-    id += this.sender.hashCode();
-    id += this.recipients.hashCode();
-    id += this.dateSent.hashCode();
-    id += this.subject.hashCode();
-    id += this.body.hashCode();
-    return id;
-  }
-
   public void setUUID(long uuid) {
     this.uuid = uuid;
   }
